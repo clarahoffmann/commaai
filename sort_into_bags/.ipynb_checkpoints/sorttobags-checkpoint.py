@@ -1,10 +1,13 @@
 import glob
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 import cv2
 from scipy.stats import norm
 import imageio
 import pandas as pd
+import png
+import csv
 
 
 vid_train_path = r'../../data/commaai/destination/'
@@ -30,6 +33,9 @@ train_time_files = [str(filepath + train_filenames[i] + '.t') for i in range(len
 
 density_path = '../../data/commaai/density/densityfastkde_density.csv'
 density = pd.read_csv(density_path)
+
+np.save('train_files_run2.npy', np.array(train_filenames))
+np.save('test_files_run2.npy', np.array(test_filenames))
 
 def read_vid_angles(vid_path, value_path, t_path, density):
     
@@ -58,15 +64,16 @@ def read_vid_angles(vid_path, value_path, t_path, density):
     target_angles = [angles.loc[find_closest_element(timestamps_frames[i], np.array(angles['t'])),'angle'] for i in range(0, len(timestamps_frames))]
     
     # downsamples images
-    new_height = 174
-    new_width = 131
-    rez_frames = []
-    for i in range(0, frames.shape[0]):
-        frames_i = cv2.resize(frames[i, :, :, :], dsize = (new_height,new_width), interpolation = cv2.INTER_LINEAR)
-        rez_frames.append(frames_i)
-    frames_i = np.array(frames_i)
+    #new_height = 174
+    #new_width = 232
+    #rez_frames = []
+    #for i in range(0, frames.shape[0]):
+    #    frames_i = cv2.resize(frames[i, :, :, :], dsize = (new_width, new_height), interpolation = cv2.INTER_LINEAR)
+    #    rez_frames.append(frames_i)
+    #frames_i = np.array(frames_i)
     # return every 5th frame
-    print(len(rez_frames))
+    rez_frames = frames
+    #print(len(rez_frames))
     trans_label = [norm.ppf(Fy(target_angles[i], density)) for i in range(0, len(target_angles))]
     
     return(rez_frames[::5], target_angles[::5], trans_label)
@@ -93,7 +100,7 @@ def Fy(y, density, density_type = 'fast_kde' ):
     integral = density.loc[find_closest_element(y, density['axes']),'cdf']
     return(integral)  
         
-for j in range(0, 500): #len(train_vid_files)
+for j in range(0, 1500): #len(train_vid_files)
     # get single file
     video_file = train_vid_files[j]
     angle_file = train_yaw_files[j]
@@ -103,52 +110,91 @@ for j in range(0, 500): #len(train_vid_files)
     
     for i, (img, label, tr_label) in enumerate(zip(images, yaw, trans_label)):
         
-        if abs(label) <= 10:
+        if abs(label) <= 5 :
+            path = '../../data/commaai/train_bags/0/'
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            #np.save(filename, np.array([img, label, tr_label]))
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)
+        
+        if abs(label) <= 10 and abs(label) > 5:
             path = '../../data/commaai/train_bags/1/'
-            filename = str(path + str(i) + '_' + str(j) + 'run1')
-            np.save(filename, np.array([img, label, tr_label]))
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)
         
         elif abs(label) <= 20 and abs(label) > 10:
             path = '../../data/commaai/train_bags/2/'
-            filename = str(path + str(i) + '_' + str(j) + 'run1')
-            np.save(filename, np.array([img, label, tr_label]))
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)
         
         elif abs(label) <= 30 and abs(label) > 20:
             path = '../../data/commaai/train_bags/3/'
-            filename = str(path + str(i) + '_' + str(j) + 'run1')
-            np.save(filename, np.array([img, label, tr_label]))
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)
         
         elif abs(label) <= 40 and abs(label) > 30:
             path = '../../data/commaai/train_bags/4/'
-            filename = str(path + str(i) + '_' + str(j) + 'run1')
-            np.save(filename, np.array([img, label, tr_label]))
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)
         
         elif abs(label) <= 50 and abs(label) > 40:
             path = '../../data/commaai/train_bags/5/'
-            filename = str(path + str(i) + '_' + str(j) + 'run1')
-            np.save(filename, np.array([img, label, tr_label]))
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)
         
         elif abs(label) <= 60 and abs(label) > 50:
             path = '../../data/commaai/train_bags/6/'
-            filename = str(path + str(i) + '_' + 'run1')
-            np.save(filename, np.array([img, label, tr_label]))
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)
         
         elif abs(label) <= 80 and abs(label) > 60:
             path = '../../data/commaai/train_bags/7/'
-            filename = str(path + str(i) + '_' + str(j) + 'run1')
-            np.save(filename, np.array([img, label, tr_label]))
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)
         
         elif abs(label) <= 120 and abs(label) > 80:
             path = '../../data/commaai/train_bags/8/'
-            filename = str(path + str(i) + '_' + str(j) + 'run1')
-            np.save(filename, np.array([img, label, tr_label]))
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)
         
         elif abs(label) <= 150 and abs(label) > 120:
             path = '../../data/commaai/train_bags/9/'
-            filename = str(path + str(i) + '_' + str(j) + 'run1')
-            np.save(filename, np.array([img, label, tr_label]))
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)
         
         elif abs(label) <= 180 and abs(label) > 150:
             path = '../../data/commaai/train_bags/10/'
-            filename = str(path + str(i) + '_' + str(j) + 'run1')
-            np.save(filename, np.array([img, label, tr_label]))
+            filename = str(path + str(i) + '_' + str(j) + 'run1.png')
+            with open(str(path + 'angles_filename.csv'), 'a') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([filename, label, tr_label])
+            plt.imsave(filename, img)

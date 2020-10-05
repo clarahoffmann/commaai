@@ -13,7 +13,7 @@ density = pd.read_csv(density_path)
 
 all_files = [glob.glob(os.path.join(str(bag_path + str(i) + '/'), "*.npy")) for i in range(1,7)]
 
-max_bins = [2000, 4000, 2500, 1000, 1000, 1000]
+max_bins = [10000, 10000, 2500, 1000, 1000, 1000]
 counts = np.zeros(6)
 
 def wrap_int64(value):
@@ -47,7 +47,7 @@ def Fy(y, density, density_type = 'fast_kde' ):
     
 counts_minus_1 = np.zeros(6)
 n = 0
-for m in range(0,int(6000/12)):
+for m in range(0,int(10000/12)):
 
     out_path_shard = str(destination + str(m) + '_new2.tfrecords')
 
