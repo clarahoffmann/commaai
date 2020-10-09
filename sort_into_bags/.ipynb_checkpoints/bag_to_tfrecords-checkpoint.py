@@ -8,7 +8,7 @@ from scipy.stats import norm
 
 destination = '../../data/commaai/train_files_from_bag/'
 bag_path = '../../data/commaai/train_bags/'
-density_path = '../../data/commaai/density/densityfastkde_density.csv'
+density_path = '../../data/commaai/density/fastkde_density.csv'
 density = pd.read_csv(density_path)
 
 all_files = [glob.glob(os.path.join(str(bag_path + str(i) + '/'), "*.npy")) for i in range(1,21)]
@@ -48,7 +48,6 @@ def Fy(y, density, density_type = 'fast_kde' ):
 counts_minus_1 = np.zeros(10)
 counts = np.zeros(10)
 n = 0
-for m in range(0,100000):
     
     #start new shard when more than 256 images have been written
     if (np.sum(counts - counts_minus_1) >= 256):
@@ -76,7 +75,8 @@ for m in range(0,100000):
                         x = np.load(current_file, allow_pickle=True)
                         img = x[0]
                         label = x[1]
-                        tr_label = x[2]
+                        #tr_label = x[2]
+                        tr_label = norm.ppf(Fy(label, density))
 
                         # write to shard
                         img_bytes = img.tostring()

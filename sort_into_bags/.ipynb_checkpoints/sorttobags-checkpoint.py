@@ -27,15 +27,19 @@ train_files_vid = all_vid_files[:train_set_size]
 train_filenames = [os.path.basename(train_files_vid[i])[:-5] for i in range(0, len(train_files_vid))]
 test_filenames = [os.path.basename(test_files_vid[i])[:-5] for i in range(0, len(test_files_vid))]
 
+train_filenames = np.load('train_files_run2.npy', allow_pickle = True)
+
 train_vid_files = [str(filepath + train_filenames[i] + '.hevc') for i in range(len(train_filenames))]
 train_yaw_files = [str(filepath + train_filenames[i] + '.value') for i in range(len(train_filenames))]
 train_time_files = [str(filepath + train_filenames[i] + '.t') for i in range(len(train_filenames))]
 
-density_path = '../../data/commaai/density/densityfastkde_density.csv'
+density_path = '../../data/commaai/density/fastkde_density.csv'
 density = pd.read_csv(density_path)
 
-np.save('train_files_run2.npy', np.array(train_filenames))
-np.save('test_files_run2.npy', np.array(test_filenames))
+#np.save('train_files_run2.npy', np.array(train_filenames))
+#np.save('test_files_run2.npy', np.array(test_filenames))
+
+
 
 def read_vid_angles(vid_path, value_path, t_path, density):
     
@@ -73,7 +77,7 @@ def read_vid_angles(vid_path, value_path, t_path, density):
     #frames_i = np.array(frames_i)
     # return every 5th frame
     rez_frames = frames
-    #print(len(rez_frames))
+    print(len(rez_frames))
     trans_label = [norm.ppf(Fy(target_angles[i], density)) for i in range(0, len(target_angles))]
     
     return(rez_frames[::5], target_angles[::5], trans_label)
@@ -100,7 +104,7 @@ def Fy(y, density, density_type = 'fast_kde' ):
     integral = density.loc[find_closest_element(y, density['axes']),'cdf']
     return(integral)  
         
-for j in range(0, 1500): #len(train_vid_files)
+for j in range(527, 1000): #len(train_vid_files)
     # get single file
     video_file = train_vid_files[j]
     angle_file = train_yaw_files[j]
@@ -108,8 +112,13 @@ for j in range(0, 1500): #len(train_vid_files)
     
     images, yaw, trans_label = read_vid_angles(video_file, angle_file, time_file, density)
     
-    for i, (img, label, tr_label) in enumerate(zip(images, yaw, trans_label)):
+    #for i, (img, label, tr_label) in enumerate(zip(images, yaw, trans_label)):
+    for i in range(0, images.shape[0]):
+        img = images[i,:,:,:]
+        label = yaw[i]
+        tr_label = trans_label[i]
         
+        print(str(i), str(j))
         if abs(label) <= 5 :
             path = '../../data/commaai/train_bags/0/'
             filename = str(path + str(i) + '_' + str(j) + 'run1.png')
