@@ -78,7 +78,7 @@ def read_vid_angles(vid_path, value_path, t_path, density):
     # return every 5th frame
     rez_frames = frames
     print(len(rez_frames))
-    trans_label = [norm.ppf(Fy(target_angles[i], density)) for i in range(0, len(target_angles))]
+    trans_label = [ 0  for i in range(0, len(target_angles))] # norm.ppf(Fy(target_angles[i], density))
     
     return(rez_frames[::5], target_angles[::5], trans_label)
 
@@ -104,7 +104,7 @@ def Fy(y, density, density_type = 'fast_kde' ):
     integral = density.loc[find_closest_element(y, density['axes']),'cdf']
     return(integral)  
         
-for j in range(527, 1000): #len(train_vid_files)
+for j in range(612, 1000): #len(train_vid_files)
     # get single file
     video_file = train_vid_files[j]
     angle_file = train_yaw_files[j]

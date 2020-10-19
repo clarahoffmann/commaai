@@ -104,7 +104,7 @@ def Fy(y, density, density_type = 'fast_kde' ):
     integral = density.loc[find_closest_element(y, density['axes']),'cdf']
     return(integral)  
         
-for j in range(612, 1000): #len(train_vid_files)
+for j in range(900, 1000): #len(train_vid_files)
     # get single file
     video_file = train_vid_files[j]
     angle_file = train_yaw_files[j]

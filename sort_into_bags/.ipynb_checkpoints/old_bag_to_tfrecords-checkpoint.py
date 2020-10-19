@@ -7,13 +7,13 @@ import tensorflow as tf
 from scipy.stats import norm
 
 destination = '../../data/commaai/train_files_from_bag/'
-bag_path = '../../data/commaai/train_bags/'
+bag_path = '../../data/commaai/train_bags_2/'
 density_path = '../../data/commaai/density/fastkde_density.csv'
 density = pd.read_csv(density_path)
 
 all_files = [glob.glob(os.path.join(str(bag_path + str(i) + '/'), "*.npy")) for i in range(1,21)]
 
-max_bins = [10000, 10000, 10000, 7500, 5000, 2500, 2500, 1000, 1000, 500]
+max_bins = [30000, 30000, 10000, 2000, 500, 500]
 counts = np.zeros(10)
 
 def wrap_int64(value):
