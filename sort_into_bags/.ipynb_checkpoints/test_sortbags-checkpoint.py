@@ -6,15 +6,16 @@ import pandas as pd
 import tensorflow as tf
 from scipy.stats import norm
 import imageio
+import cv2
 from tqdm import tqdm
 
-destination = '../../data/commaai/training_files/unrestricted_gauss_dens_resampled/'
+destination = '../../data/commaai/trash/'
 bag_path = '../../data/commaai/train_bags_2/'
 density_path = '../../data/commaai/density/gaussian_density.csv'
 density = pd.read_csv(density_path)
 
-max_bins = [40000, 40000, 10000, 2000, 500, 500]
-counts = np.zeros(6)
+max_bins = [10000, 15000, 35000, 40000, 10000, 2000, 500, 500]
+counts = np.zeros(8)
 
 def wrap_int64(value):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
@@ -58,6 +59,14 @@ df0.columns = ['filename', 'angle', 'tr_angle']
 tqdm.pandas()
 df0['tr_angle'] = df0['angle'].progress_apply(lambda x: norm.ppf(Fy(x, density)))
 
+df0a = df0.loc[abs(df0['angle']) < 1,:]
+df0a = df0a.reset_index()
+df0b = df0.loc[((abs(df0['angle']) < 2) & (abs(df0['angle']) >= 1)) ,:]
+df0b = df0b.reset_index()
+df0c = df0.loc[abs(df0['angle']) >= 2,:]
+df0c = df0c.reset_index()
+
+print(str(df0a.shape),str(df0b.shape), str(df0c.shape) )
 df1 = pd.read_csv(path1, header = None)
 df1.columns = ['filename', 'angle', 'tr_angle']
 df1['tr_angle'] = df1['angle'].progress_apply(lambda x: norm.ppf(Fy(x, density)))
@@ -78,8 +87,11 @@ df5 = pd.read_csv(path5, header = None)
 df5.columns = ['filename', 'angle', 'tr_angle']
 df5['tr_angle'] = df5['angle'].progress_apply(lambda x: norm.ppf(Fy(x, density)))
 
+# new size for resizing
+new_height = 291
+new_width = 218
 
-counts_minus_1 = np.zeros(6)
+counts_minus_1 = np.zeros(8)
 n = 0
 for m in range(0,int(40000/12)):
 
@@ -89,22 +101,26 @@ for m in range(0,int(40000/12)):
 
     with tf.io.TFRecordWriter(out_path_shard) as writer:
         
-        # write 120 images to each shard
-        for j in range(0, 12):
+        # write 300 images to each shard
+        for j in range(0, 20):
             
-             for i in range(0,6):
+             for i in range(0,8):
                 
                 if i == 0:
-                    df = df0
+                    df = df0a
                 elif i == 1:
-                    df = df1
+                    df = df0b
                 elif i == 2:
-                    df = df2
+                    df = df0c
                 elif i == 3:
-                    df = df3
+                    df = df1
                 elif i == 4:
-                    df = df4
+                    df = df2
                 elif i == 5:
+                    df = df3
+                elif i == 6:
+                    df = df4
+                elif i == 7:
                     df = df5
                     
                 # draw new sample if bin is not full yet
@@ -121,11 +137,15 @@ for m in range(0,int(40000/12)):
                         #tr_label = x[2]
 
                         img = imageio.imread(current_file_ext)
+                        # resize image and crop
+                        #img = cv2.resize(img, dsize = (new_height,new_width), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,:]
                         row = df.loc[df['filename'] == current_file, ['angle', 'tr_angle']]
                         label = float(row['angle'])
                         tr_label =  float(row['tr_angle'])
                         # write to shard
+                        print(img.shape)
                         img_bytes = img.tostring()
+                        print(len(img_bytes))
                         rows = img.shape[0]
                         cols = img.shape[1]
                         depth = img.shape[2]
@@ -199,6 +219,5 @@ for m in range(0,int(40000/12)):
                             # Write the serialized data to the TFRecords file.
                             writer.write(serialized)
 
-                            counts[i] += 1
                     except:
                         print('couldnt open file')
