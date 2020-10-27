@@ -502,6 +502,9 @@ def convert_val(train_filenames, filepath,  out_path_base, density_path):
 
                         with open(str(out_path_base + 'yaws.csv'), 'a') as csvfile:
                             csvfile.write("%s\n" % label)
+                       
+                        with open(str(out_path_base + 'yaws_transformed.csv'), 'a') as csvfile:
+                            csvfile.write("%s\n" % tr_label)
 
                         # Write the serialized data to the TFRecords file.
                         writer.write(serialized)
