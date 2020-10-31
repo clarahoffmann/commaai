@@ -109,7 +109,7 @@ tr_labels = []
 B_zetas = []
 for i in tqdm(range(0,all_img_df.shape[0])): 
     img = imageio.imread(str(img_path_base + all_img_df.loc[i,'path']))
-    img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,0:3].reshape(1,66,200,3)
+    img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,0:3].reshape(1,66,200,3)/255
     B_zeta = B_zeta_model.predict(img)
     label = all_img_df.loc[i,'angle']
     tr_label = norm.ppf(Fy(label, density))

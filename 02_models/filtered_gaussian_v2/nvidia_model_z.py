@@ -15,7 +15,7 @@ from utils import imgs_input_fn, imgs_input_fn_val, rmse, build_model, _parse_fu
 
 #define paths 
 model_dir = '../../../data/models/20201030_filtered_gaussian/'
-shard_path = '../../../data/commaai/training_files/filtered_gauss_dens_resampled_new_vers_buckets'
+shard_path = '../../../data/commaai/training_files/filtered_gauss_dens_resampled_new_vers_buckets/'
 val_path = '../../../data/commaai/test_files/val_file_filtered/'
 
 # read in shards from shard directory

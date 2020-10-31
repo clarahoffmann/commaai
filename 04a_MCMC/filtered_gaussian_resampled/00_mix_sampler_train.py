@@ -9,7 +9,7 @@ import lambda_sampler as ls
 import tau_sampler as ts
 from scipy.stats import halfcauchy
 
-extracted_coefficients_directory = '../../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/'
+extracted_coefficients_directory = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/'
 B_zeta_path = str(extracted_coefficients_directory + 'Bzeta/B_zeta.npy')
 beta_path = str(extracted_coefficients_directory + 'beta/beta.csv')
 z_path = str(extracted_coefficients_directory + 'Bzeta/tr_labels.npy')

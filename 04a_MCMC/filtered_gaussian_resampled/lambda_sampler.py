@@ -43,14 +43,14 @@ def log_density_lambda(lj, lambda_j, beta, tau, S2, betaBt, z):
     lambda2 = lambda_j**2
     betaj = beta[lj]
     return(-0.5*(betaj*betaj)/lambda2 - math.log(1+ lambda2/tau**2) - 0.5*np.sum(np.log(S2))
-           + betaBt.dot(z/np.sqrt(S2)) - 0.5*np.sum(z**2/S2)) - 0.5*math.log(lambda2)
+           + betaBt.dot(z/np.sqrt(S2)) - 0.5*np.sum(z**2/S2)) #- 0.5*math.log(lambda2)
 
 def sample_lambda(lj, log_tau_old, Lambda, p, beta, B_zeta, dS2_old, ddS2_old, S2_old, S_old, z, BoB, betaBt):
 
     Lambda_new = np.copy(Lambda)
     p = len(Lambda_new)
     log_sq_lambda_old = math.log(Lambda[lj]**2)
-    lambdaj_old = Lambda[lj]
+    lambdaj_old = np.copy(Lambda[lj])
 
     dlu = dlogFCuj(lj, lambdaj_old, beta, B_zeta, dS2_old[:,lj], ddS2_old[:,lj], S2_old, S_old, z, math.exp(log_tau_old), p, betaBt)
     ddlu = ddlogFCuj(lj, lambdaj_old, beta, B_zeta, dS2_old[:,lj], ddS2_old[:,lj], S2_old, S_old, z, math.exp(log_tau_old), p, betaBt)
@@ -63,7 +63,7 @@ def sample_lambda(lj, log_tau_old, Lambda, p, beta, B_zeta, dS2_old, ddS2_old, S
     # sample new lambda
     muu = sigma2u*dlu + log_sq_lambda_old
     unew = np.random.normal(1)*math.sqrt(sigma2u) + muu
-    lambdajnew = math.exp(0.5*unew)
+    lambdajnew = math.sqrt(math.exp(unew))
 
     if lj < p - 1:
         Lambda_new = np.append(np.append(Lambda_new[0:lj], lambdajnew), Lambda_new[lj + 1:])

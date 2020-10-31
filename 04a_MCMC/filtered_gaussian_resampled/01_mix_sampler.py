@@ -9,12 +9,14 @@ import lambda_sampler as ls
 import tau_sampler as ts
 from scipy.stats import halfcauchy
 
-B_zeta_path = '../../bdd100k_test_data/extracted_coefficients/10092020/B_zeta_predictions_val.csv'
-beta_path = '../../bdd100k_test_data/extracted_coefficients/10092020/beta.csv'
-z_path = '../../data/tfrecords/03082020/val_yaw_transformed.csv'
-B_zeta = np.genfromtxt(B_zeta_path, delimiter=',')
+extracted_coefficients_directory = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/'
+B_zeta_path = str(extracted_coefficients_directory + 'Bzeta/B_zeta.npy')
+beta_path = str(extracted_coefficients_directory + 'beta/beta.csv')
+z_path = str(extracted_coefficients_directory + 'Bzeta/tr_labels.npy')
 beta = np.genfromtxt(beta_path, delimiter=',')
-z = np.genfromtxt(z_path, delimiter=',')[0:B_zeta.shape[0]]
+B_zeta = np.load(B_zeta_path)
+B_zeta = B_zeta.reshape(B_zeta.shape[0], beta.shape[0])
+z = np.load(z_path) #[0:B_zeta.shape[0]]
 n = B_zeta.shape[0]
 p = B_zeta.shape[1]
 
@@ -42,9 +44,10 @@ for j in tqdm(range(0, num_iterations)):
     if math.log(random.random()) <= decision_criterion_tau:
         log_tau_old = log_tau_new
         tauacc.append(1)
-        all_taus.append(log_tau_new)
+        all_taus.append(log_tau_old)
     else:
         tauacc.append(0)
+        all_taus.append(log_tau_old)
     
     # update lambda
     for m in range(0, len(Lambda_old)):
