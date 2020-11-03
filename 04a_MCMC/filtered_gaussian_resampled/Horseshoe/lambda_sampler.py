@@ -78,16 +78,10 @@ def sample_lambda(lj, log_tau_old, Lambda, p, beta, B_zeta, dS2_old, ddS2_old, S
     if sigma2unew < np.finfo(float).eps:
         sigma2unew = np.finfo(float).eps
     muunew = sigma2unew*dlunew + unew
-    #log_sq_lambda_new = np.random.normal(1)*math.sqrt(variance_lambda) + mu_lambda
-    #Lambda_new[lj] = math.exp(0.5*log_sq_lambda_new)
 
     log_dens_new = log_density_lambda(lj, lambdajnew, beta, math.exp(log_tau_old), S2_new, betaBt, z)
     log_dens_old = log_density_lambda(lj, math.exp(0.5*log_sq_lambda_old), beta, math.exp(log_tau_old), S2_old, betaBt, z)
 
-
-    #ddlunew = ddlogFCuj(lj, Lambda_new, beta, B_zeta, dS2_new, ddS2_new, S2_new, S_new, z, math.exp(log_tau_old))
-    #variance_lambda_new = -1/ddlunew
-    #mu_lambda_new = variance_lambda*dlogFCuj(lj, Lambda_new, beta, B_zeta, dS2_new, ddS2_new, S2_new, S_new, z, math.exp(log_tau_old)) + log_sq_lambda_new
 
 
     proposal_new = -0.5*math.log(sigma2u) - 0.5*((unew - muu)**2)/sigma2u
