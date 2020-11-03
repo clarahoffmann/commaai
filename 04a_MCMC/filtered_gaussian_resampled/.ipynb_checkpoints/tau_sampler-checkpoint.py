@@ -44,7 +44,7 @@ def sample_tau(log_tau_old, Lambda, p):
     mu_tau = variance_tau*delta_1_log_tau(p, log_tau_old, Lambda) + log_tau_old
     
     # draw new tau
-    log_tau_new = np.random.normal(1)*math.sqrt(variance_tau) + mu_tau
+    log_tau_new = np.random.normal(0,1,1)*math.sqrt(variance_tau) + mu_tau
     # new sample has this distribution
     variance_tau_new = - 1/delta_2_log_tau(log_tau_new, Lambda)
     mu_tau_new = variance_tau*delta_1_log_tau(p, log_tau_new, Lambda) + log_tau_new

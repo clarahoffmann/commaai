@@ -35,7 +35,7 @@ def sample_beta(p, B_zeta, Lambda, S, z):
 
 def log_density_tau(log_tau, Lambda, p):
     tau2 = math.exp(log_tau)**2
-    log_density = -log_tau*(p-1) - np.sum(np.log(1+Lambda**2/tau2)) - math.log(1 + tau2)
+    log_density = -log_tau*(p-1) - 2*np.sum(np.log(1+Lambda**2/tau2)) - math.log(1 + tau2)
     return(log_density)
     
 def sample_tau(log_tau_old, Lambda, p):
@@ -44,7 +44,7 @@ def sample_tau(log_tau_old, Lambda, p):
     mu_tau = variance_tau*delta_1_log_tau(p, log_tau_old, Lambda) + log_tau_old
     
     # draw new tau
-    log_tau_new = np.random.normal(1)*math.sqrt(variance_tau) + mu_tau
+    log_tau_new = np.random.normal(0,1,1)*math.sqrt(variance_tau) + mu_tau
     
     # new sample has this distribution
     variance_tau_new = - 1/delta_2_log_tau(log_tau_new, Lambda)

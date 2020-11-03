@@ -15,33 +15,24 @@ def generate_dS2_ddS2_S2_S(Lambda, BoB):
     
     return(dS2, ddS2, S2, S)
 
-def ddlogFCuj(Lambda, beta, B_zeta, dS2, ddS2, S2, S, z, tau):
-    
-    p = len(Lambda)
-    Lambda2 = Lambda**2
+def dlogFCuj(lj, lambdaj, beta, B_zeta, dS2, ddS2, S2, S, z, tau, p, betaBt):
+    Lambdaj2 = lambdaj**2
     tau2 = tau**2
-    
-    lu = np.zeros(p)
-    for lj in range(0,p):
-        term1 = -0.5*(beta[lj]**2)/(Lambda2[lj]) - (Lambda2[lj]/(tau2))/((1+ Lambda2[lj]/(tau2))**2)
-        term2 = -0.5*np.sum(ddS2[:,lj]/S2 - (dS2[:,lj]/S2)**2)
-        term3 = -0.5*np.sum((z**2)*(2*(dS2[:,lj]**2)/(S2**3) - ddS2[:,lj]/(S2**2)))
-        term4 = beta.dot(B_zeta.T).dot(np.diag(0.75*(dS2[:,lj]**2)/(S2**2.5) - 0.5*(ddS2[:,lj]/(S2**1.5)))).dot(z)
-        lu[lj] = term1 + term2 + term3 + term4
-    return (lu)
+    return(0.5*(beta[lj]**2)/Lambdaj2 - (Lambdaj2/tau2)/(1 +Lambdaj2/tau2) 
+    - 0.5*np.sum(dS2/S2)
+    - 0.5*np.sum((z*z*(-dS2/(S2**2))))
+    + np.sum(betaBt*(-0.5*(dS2/(S2**(1.5))))*z))
 
-def dlogFCuj(Lambda, beta, B_zeta, dS2, ddS2, S2, S, z, tau):
-    p = len(Lambda)
-    Lambda2 = Lambda**2
+
+def ddlogFCuj(lj, lambdaj, beta, B_zeta, dS2, ddS2, S2, S, z, tau, p, betaBt):
+
+    lambdaj2 = lambdaj**2
     tau2 = tau**2
-    dlogFucj = np.zeros(p)
-    for lj in range(0,p):
-        term1 = 0.5*(beta[lj]**2)/Lambda2[lj] - (Lambda2[lj]/tau2)/(1 + Lambda2[lj]/tau2) 
-        term2 = - 0.5*np.sum(dS2[:,lj]/S2)
-        term3 = - 0.5*np.sum((z*z*(-dS2[:,lj]/(S2**2))))
-        term4 = np.sum( beta.dot(B_zeta.T).dot(np.diag(-0.5*(dS2[:,lj]/(S2**(1.5))))).dot(z))
-        dlogFucj[lj] = term1 + term2 + term3 + term4
-    return(dlogFucj)
+    # to the power of two or 1? different in code and paper...
+    return(-0.5*(beta[lj]**2)/(lambdaj2) - (lambdaj2/(tau2))/((1+ lambdaj2/(tau2))**2) -
+        0.5*np.sum(ddS2/S2 - ((dS2**2)/(S2**2))) -
+         0.5*np.sum((z**2)*(2*(dS2**2)/(S2**3) - ddS2/(S2**2))) + 
+     np.sum(betaBt*(0.75*(dS2**2)/(S2**2.5) - 0.5*(ddS2/(S2**1.5)))*z))
 
 def delta_1_log_tau(p, log_tau, Lambda):
     tau = math.exp(log_tau)
@@ -53,7 +44,7 @@ def delta_2_log_tau(log_tau, Lambda):
     tau = math.exp(log_tau)
     Lambda2 = Lambda**2
     tau2 = tau**2
-    return(4*(tau2**2)/((1+tau2)**2) - 4*(tau2**2)/(1+tau2) + 4*np.sum(((Lambda2/tau**2)**2)*((1+Lambda2/(tau2))**(-2))) - 4*np.sum(((Lambda2)/(tau2))*(1/(1+ (Lambda2)/tau2))))
+    return(4*(tau2**2)/((1+tau2)**2) - 4*(tau2**2)/(1+tau2) + 4*np.sum(((Lambda2/tau**2)**2)*((1+Lambda2/(tau2))**(-2))) - 4*np.sum(((Lambda2)/(tau2))*(1/(1 + (Lambda2)/tau2))))
 
 def logFCuj(Lambdaj, beta, B_zeta, S2, z, betaj, tau):
     Lambdaj2 = Lambdaj**2

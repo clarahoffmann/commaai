@@ -7,7 +7,7 @@ def delta_1_log_tau(p, log_tau, Lambda):
     tau = math.exp(log_tau)
     tau2 = tau**2
     Lambda2 = Lambda**2
-    return(- (p-1) - (2*tau2)/(1+tau2) + 2*np.sum((Lambda2/tau2)/(1+Lambda2/(tau2))))
+    return(- (p-1) - (2*tau2)/(1+tau2) + np.sum((Lambda2/tau2)*(1/(1+Lambda2/(tau2)))))
     
 def delta_2_log_tau(log_tau, Lambda):
     tau = math.exp(log_tau)
@@ -45,6 +45,7 @@ def sample_tau(log_tau_old, Lambda, p):
     
     # draw new tau
     log_tau_new = np.random.normal(0,1,1)*math.sqrt(variance_tau) + mu_tau
+    
     # new sample has this distribution
     variance_tau_new = - 1/delta_2_log_tau(log_tau_new, Lambda)
     mu_tau_new = variance_tau*delta_1_log_tau(p, log_tau_new, Lambda) + log_tau_new

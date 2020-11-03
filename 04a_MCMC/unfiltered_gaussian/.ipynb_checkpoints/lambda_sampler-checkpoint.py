@@ -5,12 +5,13 @@ import random
 def dlogFCuj(lj, lambdaj, beta, B_zeta, dS2, ddS2, S2, S, z, tau, p, betaBt):
     Lambdaj2 = lambdaj**2
     tau2 = tau**2
-    term1 = 0.5*(beta[lj]**2)/Lambdaj2 - (Lambdaj2/tau2)/(1 +Lambdaj2/tau2) 
-    term2 = - 0.5*np.sum(dS2/S2)
-    term3 = - 0.5*np.sum((z*z*(-dS2/(S2**2))))
-    term4 = np.sum(betaBt*(-0.5*(dS2/(S2**(1.5))))*z)
-    dlogFucj = term1 + term2 + term3 + term4
-    return(dlogFucj)
+    #term1 = 0.5*(beta[lj]**2)/Lambdaj2 - (Lambdaj2/tau2)/(1 +Lambdaj2/tau2) 
+    #term2 = - 0.5*np.sum(dS2/S2)
+    #term3 = - 0.5*np.sum((z*z*(-dS2/(S2**2))))
+    #term4 = np.sum(betaBt*(-0.5*(dS2/(S2**(1.5))))*z)
+    #dlogFucj = term1 + term2 + term3 + term4
+    return(0.5*(beta[lj]**2)/Lambdaj2 - (Lambdaj2/tau2)/(1 +Lambdaj2/tau2)  - 0.5*np.sum(dS2/S2)
+          - 0.5*np.sum((z*z*(-dS2/(S2**2)))) + np.sum(betaBt*(-0.5*(dS2/(S2**(1.5))))*z))
 
    
 
@@ -19,12 +20,13 @@ def ddlogFCuj(lj, lambdaj, beta, B_zeta, dS2, ddS2, S2, S, z, tau, p, betaBt):
     lambdaj2 = lambdaj**2
     tau2 = tau**2
     # to the power of two or 1? different in code and paper...
-    term1 = -0.5*(beta[lj]**2)/(lambdaj2) - (lambdaj2/(tau2))/((1+ lambdaj2/(tau2))**2)
-    term2 =  - 0.5*np.sum(ddS2/S2 - (dS2**2/S2**2))
-    term3 = -0.5*np.sum((z**2)*(2*(dS2**2)/(S2**3) - ddS2/(S2**2)))
-    term4 = np.sum(betaBt*(0.75*(dS2**2)/(S2**2.5) - 0.5*(ddS2/(S2**1.5)))*z)
-    ddlogFCuj = term1 + term2 + term3 + term4
-    return (ddlogFCuj)
+    #term1 = -0.5*(beta[lj]**2)/(lambdaj2) - (lambdaj2/(tau2))/((1+ lambdaj2/(tau2))**2)
+    #term2 =  - 0.5*np.sum(ddS2/S2 - (dS2**2/S2**2))
+    #term3 = -0.5*np.sum((z**2)*(2*(dS2**2)/(S2**3) - ddS2/(S2**2)))
+    #term4 = np.sum(betaBt*(0.75*(dS2**2)/(S2**2.5) - 0.5*(ddS2/(S2**1.5)))*z)
+    #ddlogFCuj = term1 + term2 + term3 + term4
+    return (-0.5*(beta[lj]**2)/(lambdaj2) - (lambdaj2/(tau2))/((1+ lambdaj2/(tau2))**2) - 0.5*np.sum(ddS2/S2 - (dS2**2/S2**2))
+           -0.5*np.sum((z**2)*(2*(dS2**2)/(S2**3) - ddS2/(S2**2))) + np.sum(betaBt*(0.75*(dS2**2)/(S2**2.5) - 0.5*(ddS2/(S2**1.5)))*z))
 
 def generate_dS2_ddS2_S2_S_lj(lj, lambda_new, BoB):
     
@@ -62,7 +64,7 @@ def sample_lambda(lj, log_tau_old, Lambda, p, beta, B_zeta, dS2_old, ddS2_old, S
 
     # sample new lambda
     muu = sigma2u*dlu + log_sq_lambda_old
-    unew = np.random.normal(1)*math.sqrt(sigma2u) + muu
+    unew = np.random.normal(0,1,1)*math.sqrt(sigma2u) + muu
     lambdajnew = math.exp(0.5*unew)
 
     if lj < p - 1:
@@ -85,8 +87,9 @@ def sample_lambda(lj, log_tau_old, Lambda, p, beta, B_zeta, dS2_old, ddS2_old, S
     #log_sq_lambda_new = np.random.normal(1)*math.sqrt(variance_lambda) + mu_lambda
     #Lambda_new[lj] = math.exp(0.5*log_sq_lambda_new)
 
-    log_dens_new = log_density_lambda(lj, lambdajnew, beta, math.exp(log_tau_old), S2_new, betaBt, z)
-    log_dens_old = log_density_lambda(lj, math.exp(0.5*log_sq_lambda_old), beta, math.exp(log_tau_old), S2_old, betaBt, z)
+    tau_old = math.exp(log_tau_old)
+    log_dens_new = log_density_lambda(lj, lambdajnew, beta, tau_old, S2_new, betaBt, z)
+    log_dens_old = log_density_lambda(lj, lambdaj_old, beta, tau_old, S2_old, betaBt, z)
 
 
     #ddlunew = ddlogFCuj(lj, Lambda_new, beta, B_zeta, dS2_new, ddS2_new, S2_new, S_new, z, math.exp(log_tau_old))

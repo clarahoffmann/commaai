@@ -5,12 +5,10 @@ import random
 def dlogFCuj(lj, lambdaj, beta, B_zeta, dS2, ddS2, S2, S, z, tau, p, betaBt):
     Lambdaj2 = lambdaj**2
     tau2 = tau**2
-    term1 = 0.5*(beta[lj]**2)/Lambdaj2 - (Lambdaj2/tau2)/(1 +Lambdaj2/tau2) 
-    term2 = - 0.5*np.sum(dS2/S2)
-    term3 = - 0.5*np.sum((z*z*(-dS2/(S2**2))))
-    term4 = np.sum(betaBt*(-0.5*(dS2/(S2**(1.5))))*z)
-    dlogFucj = term1 + term2 + term3 + term4
-    return(dlogFucj)
+    return(0.5*(beta[lj]**2)/Lambdaj2 - (Lambdaj2/tau2)/(1 +Lambdaj2/tau2) -
+     0.5*np.sum(dS2/S2) - 
+    0.5*np.sum((z*z*(-dS2/(S2**2)))) +
+    np.sum(betaBt*(-0.5*(dS2/(S2**(1.5))))*z))
 
    
 
@@ -19,12 +17,10 @@ def ddlogFCuj(lj, lambdaj, beta, B_zeta, dS2, ddS2, S2, S, z, tau, p, betaBt):
     lambdaj2 = lambdaj**2
     tau2 = tau**2
     # to the power of two or 1? different in code and paper...
-    term1 = -0.5*(beta[lj]**2)/(lambdaj2) - (lambdaj2/(tau2))/((1+ lambdaj2/(tau2))**2)
-    term2 =  - 0.5*np.sum(ddS2/S2 - (dS2**2/S2**2))
-    term3 = -0.5*np.sum((z**2)*(2*(dS2**2)/(S2**3) - ddS2/(S2**2)))
-    term4 = np.sum(betaBt*(0.75*(dS2**2)/(S2**2.5) - 0.5*(ddS2/(S2**1.5)))*z)
-    ddlogFCuj = term1 + term2 + term3 + term4
-    return (ddlogFCuj)
+    return(-0.5*(beta[lj]**2)/(lambdaj2) - (lambdaj2/(tau2))/((1+ lambdaj2/(tau2))**2) -
+       0.5*np.sum(ddS2/S2 - ((dS2**2)/(S2**2))) - 
+     0.5*np.sum((z**2)*(2*(dS2**2)/(S2**3) - ddS2/(S2**2))) + 
+     np.sum(betaBt*(0.75*(dS2**2)/(S2**2.5) - 0.5*(ddS2/(S2**1.5)))*z))
 
 def generate_dS2_ddS2_S2_S_lj(lj, lambda_new, BoB):
     
@@ -34,7 +30,7 @@ def generate_dS2_ddS2_S2_S_lj(lj, lambda_new, BoB):
     S = np.sqrt(S2)
     
     dS2 = - BoB[:,lj]*(lambda_new[lj]**2)/((1+W)**2)
-    ddS2 = - BoB[:,lj]*(lambda_new[lj]**2)/((1+W)**2) + (BoB[:,lj]*(lambda_new[lj]**2)**2)/((1+W)**3)
+    ddS2 = (- BoB[:,lj]*(lambda_new[lj]**2) + (BoB[:,lj]*(lambda_new[lj]**2)**2))/((1+W)**3)
     
     return(dS2, ddS2, S2, S)
 
@@ -43,7 +39,7 @@ def log_density_lambda(lj, lambda_j, beta, tau, S2, betaBt, z):
     lambda2 = lambda_j**2
     betaj = beta[lj]
     return(-0.5*(betaj*betaj)/lambda2 - math.log(1+ lambda2/tau**2) - 0.5*np.sum(np.log(S2))
-           + betaBt.dot(z/np.sqrt(S2)) - 0.5*np.sum(z**2/S2)) #- 0.5*math.log(lambda2)
+           + betaBt.dot(z/np.sqrt(S2)) - 0.5*np.sum(z**2/S2) - 0.5*math.log(lambda2))
 
 def sample_lambda(lj, log_tau_old, Lambda, p, beta, B_zeta, dS2_old, ddS2_old, S2_old, S_old, z, BoB, betaBt):
 
@@ -62,8 +58,8 @@ def sample_lambda(lj, log_tau_old, Lambda, p, beta, B_zeta, dS2_old, ddS2_old, S
 
     # sample new lambda
     muu = sigma2u*dlu + log_sq_lambda_old
-    unew = np.random.normal(1)*math.sqrt(sigma2u) + muu
-    lambdajnew = math.sqrt(math.exp(unew))
+    unew = np.random.normal(0,1,1)*math.sqrt(sigma2u) + muu
+    lambdajnew = math.exp(0.5*unew)
 
     if lj < p - 1:
         Lambda_new = np.append(np.append(Lambda_new[0:lj], lambdajnew), Lambda_new[lj + 1:])
