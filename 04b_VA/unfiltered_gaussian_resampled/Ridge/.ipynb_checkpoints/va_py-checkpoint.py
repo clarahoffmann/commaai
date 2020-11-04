@@ -7,7 +7,7 @@ from scipy.stats import multivariate_normal
 import matplotlib.pyplot as plt 
 from tqdm import tqdm
 
-extracted_coefficients_path = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/'
+extracted_coefficients_path = '../../../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/'
 B_zeta_path = str(extracted_coefficients_path + 'Bzeta/B_zeta.npy')
 beta_path = str(extracted_coefficients_path + 'beta/beta.csv')
 z_path = str(extracted_coefficients_path + 'Bzeta/tr_labels.npy')
@@ -126,6 +126,12 @@ for i in tqdm(range(iterations)):
     update_d, E_g2_t_1_d, E_delta_x_2_1_d = adadelta_change(Delta_D, E_g2_t_1_d, E_delta_x_2_1_d, decay_rate = decay_rate, constant = constant)
     
     # Update variables
+    '''rho = 0.9
+    mu_t = mu_t + rho*Delta_mu.reshape(m,1)
+    B_t = B_t + rho*Delta_B
+    B_t *= np.tri(*B_t.shape)
+    d_t = (d_t + rho*Delta_D)
+    D_t = np.diag(d_t.reshape(m,))'''
     mu_t = mu_t + update_mu.reshape(m,1)
     B_t = B_t + update_B
     # set upper triangular elements to 0
@@ -152,6 +158,8 @@ for i in tqdm(range(iterations)):
     
     # increase time count
     t = t+1
-
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/lower_bounds.npy', lower_bounds)
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/vartheta.npy', np.array(all_varthetas))
+    
+    # can also set lambda as the value over the last 10 steps
+    
+np.save('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/lower_bounds.npy', lower_bounds)
+np.save('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/vartheta.npy', np.array(all_varthetas))
