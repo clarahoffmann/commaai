@@ -44,7 +44,7 @@ def delta_2_log_tau(log_tau, Lambda):
     tau = math.exp(log_tau)
     Lambda2 = Lambda**2
     tau2 = tau**2
-    return(4*(tau2**2)/((1+tau2)**2) - 4*(tau2**2)/(1+tau2) + 4*np.sum(((Lambda2/tau**2)**2)*((1+Lambda2/(tau2))**(-2))) - 4*np.sum(((Lambda2)/(tau2))*(1/(1+ (Lambda2)/tau2))))
+    return(4*(tau2**2)/((1+tau2)**2) - 4*(tau2**2)/(1+tau2) + 4*np.sum(((Lambda2/tau**2)**2)*((1+Lambda2/(tau2))**(-2))) - 4*np.sum(((Lambda2)/(tau2))*(1/(1 + (Lambda2)/tau2))))
 
 def logFCuj(Lambdaj, beta, B_zeta, S2, z, betaj, tau):
     Lambdaj2 = Lambdaj**2
