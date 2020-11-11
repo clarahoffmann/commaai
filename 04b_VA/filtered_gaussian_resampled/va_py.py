@@ -92,7 +92,12 @@ def adadelta_change(gradient, E_g2_t_1, E_delta_x_2_1, decay_rate = 0.99, consta
 
 lower_bounds = []
 all_varthetas = []
+d_ts = []
+mu_ts = []
+d_ts = []
+B_ts = []
 t = 0
+
 iterations = 50000
 for i in tqdm(range(iterations)):
     
@@ -149,9 +154,15 @@ for i in tqdm(range(iterations)):
     L_lambda = log_h_t - log_q_lambda_t
     lower_bounds.append(L_lambda.item())
     all_varthetas.append(vartheta_t)
+    mu_ts.append(mu_t)
+    d_ts.append(d_t)
+    B_ts.append(B_t)
     
     # increase time count
     t = t+1
 
 np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/lower_bounds.npy', lower_bounds)
 np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/vartheta.npy', np.array(all_varthetas))
+np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/mu_ts.npy', mu_ts)
+np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/d_ts.npy', d_ts)
+np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/B_ts.npy', B_ts)

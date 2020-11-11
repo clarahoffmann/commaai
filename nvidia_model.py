@@ -39,11 +39,11 @@ def imgs_input_fn(filenames, perform_shuffle = True, repeat_count = EPOCHS, batc
     def _parse_function(proto):
         # define your tfrecord again. Remember that you saved your image as a string.
         keys_to_features = {'image': tf.io.FixedLenFeature([], tf.string),
-                            "label": tf.io.FixedLenFeature([], tf.float32),
+                            'label': tf.io.FixedLenFeature([], tf.float32),
                             'rows': tf.io.FixedLenFeature([], tf.int64),
                             'cols': tf.io.FixedLenFeature([], tf.int64),
                             'depth': tf.io.FixedLenFeature([], tf.int64),
-                            "tr_label": tf.io.FixedLenFeature([], tf.float32),
+                            'tr_label': tf.io.FixedLenFeature([], tf.float32)
                            }
 
         # Load one example
@@ -82,10 +82,11 @@ def imgs_input_fn_val(filenames, perform_shuffle = False, repeat_count = 1, batc
     def _parse_function(proto):
         # define your tfrecord again. Remember that you saved your image as a string.
         keys_to_features = {'image': tf.io.FixedLenFeature([], tf.string),
-                            "label": tf.io.FixedLenFeature([], tf.float32),
+                            'label': tf.io.FixedLenFeature([], tf.float32),
                             'rows': tf.io.FixedLenFeature([], tf.int64),
                             'cols': tf.io.FixedLenFeature([], tf.int64),
-                            'depth': tf.io.FixedLenFeature([], tf.int64)
+                            'depth': tf.io.FixedLenFeature([], tf.int64),
+                            'tr_label': tf.io.FixedLenFeature([], tf.float32)
                            }
 
         # Load one example

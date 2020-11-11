@@ -15,8 +15,8 @@ from scipy.stats import norm
 
 #val_path = ['../../../../data/tfrecords/val/20200925/val_5000.tfrecords'
 model_dir = '../data/models/20200928_nvidia_ai/'
-shard_path = '../data/commaai/train_files_from_bag_test/'
-val_path = '../data/commaai/test/'
+shard_path = '../data/commaai/training_files/unrestricted_gauss_dens_resampled/'
+val_path = '../data/commaai/test_files/'
 
 c = 2000000
 EPOCHS = 50
@@ -27,7 +27,7 @@ shard_files = glob.glob(os.path.join(shard_path, "*.tfrecords"))
 #shard_files = ['../data/commaai/train_files_from_bag_test/0_new2.tfrecords']
 
 #val_files = glob.glob(os.path.join(val_path, "*.tfrecords")) 
-val_files = ['../data/commaai/test2/testshard_test.tfrecords']
+val_files = ['../data/commaai/test_files/_test.tfrecords']
 
 random.shuffle(shard_files)
 # is repeat count epochs ? i think yes
@@ -58,7 +58,7 @@ def imgs_input_fn(filenames, perform_shuffle = True, repeat_count = EPOCHS, batc
         image = tf.cast(image, tf.float32)
 
         image = tf.reshape(image, image_shape)
-        image = tf.image.resize(image[33:99,37:137, :], [66,200])
+        image = tf.image.resize(image, [218, 291])[76:142, 45:245,:]
         image = image/255 
         
         return {'image':image}, tr_label
@@ -101,7 +101,7 @@ def imgs_input_fn_val(filenames, perform_shuffle = False, repeat_count = 1, batc
         image = tf.cast(image, tf.float32)
 
         image = tf.reshape(image, image_shape)
-        image = tf.image.resize(image[33:99,37:137, :], [66,200])
+        image = tf.image.resize(image, [218, 291])[76:142, 45:245,:]
         image = image/255 
 
         return {'image':image}, tr_label
