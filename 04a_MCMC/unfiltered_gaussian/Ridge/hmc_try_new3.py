@@ -18,7 +18,7 @@ theta_prior = 2.5
 beta = np.repeat(0,10)
 # number of samples we want to produce
 M = 10000 + 1
-L = 300
+L = 250
 
 # number of parameters of theta
 q = B_zeta.shape[1] + 1
@@ -156,6 +156,13 @@ for m in tqdm(range(1, M - 1)):
         r_m[m + 1] = - r_tilde[m - 1]
         acc.append(0)
         all_thetas.append(np.array(theta_m_1[m + 1]))
-        np.save('../../../../data/commaai/mcmc/unfiltered_gaussian_resampled/Ridge/vartheta_trynew_superlargeL.npy', all_thetas)
+    
+    if m%100 == 0:
+        np.save('../../../../data/commaai/mcmc/unfiltered_gaussian_resampled/Ridge/vartheta_trynew3.npy', all_thetas)
+        try:
+            print(np.mean(acc[(m - 100):]))
+        except:
+            pass
+
 
 np.save('../../../../data/commaai/mcmc/unfiltered_gaussian_resampled/Ridge/vartheta_L150.npy', all_thetas)
