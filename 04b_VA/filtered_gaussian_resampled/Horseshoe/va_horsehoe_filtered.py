@@ -7,7 +7,7 @@ from scipy.stats import multivariate_normal
 import matplotlib.pyplot as plt 
 from tqdm import tqdm
 
-extracted_coefficients_path = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/'
+extracted_coefficients_path = '../../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/'
 B_zeta_path = str(extracted_coefficients_path + 'Bzeta/B_zeta.npy')
 beta_path = str(extracted_coefficients_path + 'beta/beta.csv')
 z_path = str(extracted_coefficients_path + 'Bzeta/tr_labels.npy')
@@ -17,14 +17,14 @@ beta = np.genfromtxt(beta_path, delimiter=',')
 B_zeta = np.load(B_zeta_path)
 B_zeta = B_zeta.reshape(B_zeta.shape[0], beta.shape[0])
 tBB = B_zeta.T.dot(B_zeta)
+BoB = B_zeta**2
 z = np.load(z_path) #[0:B_zeta.shape[0]]
 
 # p is the number of beta coefficients in the last hidden layer
 p = B_zeta.shape[1]
 
-
 # Lambda is a diagonal matrix of dimension p
-Lambda = np.diag(np.random.rand(p,))
+Lambda = np.random.rand(p,)
 
 seed(679305)
 tau_start = 0.01
@@ -37,14 +37,12 @@ theta = 2.5
 n = B_zeta.shape[0]
 
 # S(x, theta) is of dimension n x n
-W = np.array([B_zeta[i,:].dot(B_zeta[i,:]) for i in range(0, n)])
-S = np.sqrt(1/(1 + W*tau_start))
-S2 = S**2
+dS2, ddS2, S2, S = hlp.generate_dS2_ddS2_S2_S(Lambda, BoB)
 
 # m is number of variational parameters, which is 
 # 2p (for each lambda_j and each beta_j)
 # plus the variational parameter for the prior on lambda
-m = p + 1
+m = 2*p + 1
 
 # number of factors in the factored covariance representation
 k = m - 2
@@ -92,13 +90,13 @@ def adadelta_change(gradient, E_g2_t_1, E_delta_x_2_1, decay_rate = 0.99, consta
 
 lower_bounds = []
 all_varthetas = []
-d_ts = []
 mu_ts = []
 d_ts = []
 B_ts = []
+Lambda_ts = []
+log_tau_ts = []
 t = 0
-
-iterations = 50000
+iterations = 30000
 for i in tqdm(range(iterations)):
     
     # 1. Generate epsilon_t and z_t
@@ -113,7 +111,8 @@ for i in tqdm(range(iterations)):
     betaBt_t = beta_t.dot(B_zeta.T)
     
     # 3. Compute gradient of beta, lambda_j, and tau
-    gradient_h_t = hlp.Delta_theta(vartheta_t, B_zeta, n, z, p, tBB, betaBt_t, theta, W)
+    gradient_h_t = hlp.Delta_theta(vartheta_t, B_zeta, n, z, p, tBB, betaBt_t, BoB)
+    
     
     # Compute inverse with Woodbury formula.
     inv = np.linalg.inv(D_t.dot(D_t))
@@ -131,6 +130,12 @@ for i in tqdm(range(iterations)):
     update_d, E_g2_t_1_d, E_delta_x_2_1_d = adadelta_change(Delta_D, E_g2_t_1_d, E_delta_x_2_1_d, decay_rate = decay_rate, constant = constant)
     
     # Update variables
+    '''rho = 0.9
+    mu_t = mu_t + rho*Delta_mu.reshape(m,1)
+    B_t = B_t + rho*Delta_B
+    B_t *= np.tri(*B_t.shape)
+    d_t = (d_t + rho*Delta_D)
+    D_t = np.diag(d_t.reshape(m,))'''
     mu_t = mu_t + update_mu.reshape(m,1)
     B_t = B_t + update_B
     # set upper triangular elements to 0
@@ -143,26 +148,44 @@ for i in tqdm(range(iterations)):
     
     # 5. compute stopping criterion
     beta_t = vartheta_t_transf[0:p].reshape(p,)
-    u_t = vartheta_t_transf[p]
+    Lambda_t = vartheta_t_transf[p:2*p].reshape(p,)
+    log_tau_t = vartheta_t_transf[2*p]
     betaBt_t = beta_t.dot(B_zeta.T) 
     
+    dS2, ddS2, S2, S = hlp.generate_dS2_ddS2_S2_S(Lambda_t, BoB)
+    
     # Lower bound L(lambda) = E[log(L_lambda - q_lambda]
-    log_h_t = hlp.log_density(z, u_t,  beta_t, B_zeta, p, n, S, S2, tBB, theta, betaBt_t)
+    log_h_t = hlp.log_density(S, B_zeta, beta_t, Lambda_t, log_tau_t, z, p)
     log_q_lambda_t = np.log(hlp.multivariate_normal(vartheta_t, m, mu_t, (B_t.dot(B_t.T) + D_t**2)))
+    
+    # evidence lower bound
+    L_lambda = log_h_t - log_q_lambda_t
+    log_tau_ts.append(log_tau_t)
+    Lambda_ts.append(Lambda_t)
+    lower_bounds.append(L_lambda.item())
+    all_varthetas.append(vartheta_t)
     
     # evidence lower bound
     L_lambda = log_h_t - log_q_lambda_t
     lower_bounds.append(L_lambda.item())
     all_varthetas.append(vartheta_t)
+    
+    # increase time count
+    t = t+1
+    
+    # can also set lambda as the value over the last 10 steps
     mu_ts.append(mu_t)
     d_ts.append(d_t)
     B_ts.append(B_t)
     
-    # increase time count
-    t = t+1
+    if (i % 1000 == 0):
+        np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/mu_ts.npy', mu_ts)
+        np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/d_ts.npy', d_ts)
+        np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/B_ts.npy', B_ts)
+        np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/lower_bounds.npy', lower_bounds)
+        np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/all_varthetas.npy', all_varthetas)
+        np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/Lambda_ts.npy', Lambda_ts)
 
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/lower_bounds.npy', lower_bounds)
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/vartheta.npy', np.array(all_varthetas))
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/mu_ts.npy', mu_ts)
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/d_ts.npy', d_ts)
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/B_ts.npy', B_ts)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/mu_ts_delete.npy', mu_ts)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/d_ts_delete.npy', d_ts)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/B_ts_delete.npy', B_ts)

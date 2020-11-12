@@ -7,7 +7,7 @@ from scipy.stats import multivariate_normal
 import matplotlib.pyplot as plt 
 from tqdm import tqdm
 
-extracted_coefficients_path = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/'
+extracted_coefficients_path = '../../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/'
 B_zeta_path = str(extracted_coefficients_path + 'Bzeta/B_zeta.npy')
 beta_path = str(extracted_coefficients_path + 'beta/beta.csv')
 z_path = str(extracted_coefficients_path + 'Bzeta/tr_labels.npy')
@@ -161,8 +161,8 @@ for i in tqdm(range(iterations)):
     # increase time count
     t = t+1
 
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/lower_bounds.npy', lower_bounds)
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/vartheta.npy', np.array(all_varthetas))
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/mu_ts.npy', mu_ts)
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/d_ts.npy', d_ts)
-np.save('../../../data/commaai/va/filtered_gaussian_resampled/Ridge/B_ts.npy', B_ts)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/lower_bounds.npy', lower_bounds)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/vartheta.npy', np.array(all_varthetas))
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/mu_ts.npy', mu_ts)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/d_ts.npy', d_ts)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/B_ts.npy', B_ts)

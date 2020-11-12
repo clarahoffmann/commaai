@@ -20,7 +20,7 @@ theta_prior = 2.5
 beta = np.repeat(0,10)
 # number of samples we want to produce
 M = 10000 + 1
-L = 50
+L = 100
 
 # number of parameters of theta
 q = 2*B_zeta.shape[1] + 1
@@ -34,7 +34,7 @@ n = B_zeta.shape[0]
 theta_m_1 = np.zeros(q)
 
 # stepsize
-epsilon = 0.0000001
+epsilon = 0.000005
 
 r_m = np.zeros(theta_m_1.shape[0])
 
@@ -59,11 +59,16 @@ def generate_dS2_ddS2_S2_S(Lambda, BoB):
     W = np.sum(BoB*(Lambda**2), axis = 1)
     S2 = (1/(1 + W))
     S = np.sqrt(S2)
+    n, p = BoB.shape
+    W = np.sum(BoB*(Lambda**2), axis = 1)
+    S2 = (1/(1 + W))
+    S = np.sqrt(S2)
+    Lambda2 = Lambda**2
     
     dS2, ddS2 = np.zeros((n,p)), np.zeros((n,p))
     for lj in range(0, p):
-        dS2[:,lj] = - BoB[:,lj]*(Lambda[lj]**2)/((1+W)**2)
-        ddS2[:,lj] = (-BoB[:,lj]*(Lambda[lj]**2) + (BoB[:,lj]*(Lambda[lj]**2)**2))/((1+W)**3)
+        dS2[:,lj] = - BoB[:,lj]*Lambda2[lj]/((1+W)**2)
+        ddS2[:,lj] = (-BoB[:,lj]*Lambda2[lj] + (BoB[:,lj]*(Lambda2[lj]**2)))/((1+W)**3)
     
     return(dS2, ddS2, S2, S)
 
@@ -73,11 +78,11 @@ def delta_1_lambda(Lambda, beta, B_zeta, dS2, ddS2, S2, S, z, tau):
     Lambda2 = Lambda**2
     tau2 = tau**2
     dlogFucj = np.zeros(p)
-    #for lj in tqdm(range(0,p)):
-    #    dlogFucj[lj] = 0.5*(beta[lj]**2)/Lambda2[lj] - (Lambda2[lj]/tau2)/(1 + Lambda2[lj]/tau2) - 0.5*np.sum(dS2[:,lj]/S2) - 0.5*np.sum((z*z*(-dS2[:,lj]/(S2**2)))) + np.sum( beta.dot(B_zeta.T).dot(np.diag(-0.5*(dS2[:,lj]/(S2**(1.5))))).dot(z))  
-    dlogFucj = (0.5*(beta**2)/Lambda2 - (Lambda2/tau2)/(1 + Lambda2/tau2) - 0.5*np.sum(dS2/(np.tile(S2.T, [p,1]).T), axis = 0) - 
-               0.5*np.sum((np.tile(z*z, [p,1]).T*(-dS2/np.tile((S2**2), [p,1]).T)), axis = 0) + 
-               (beta*((B_zeta*(-0.5)*(dS2/np.tile(S2**1.5, [p,1]).T)).T).dot(z)))
+    for lj in tqdm(range(0,p)):
+        dlogFucj[lj] = 0.5*(beta[lj]**2)/Lambda2[lj] - (Lambda2[lj]/tau2)/(1 + Lambda2[lj]/tau2) - 0.5*np.sum(dS2[:,lj]/S2) - 0.5*np.sum((z*z*(-dS2[:,lj]/(S2**2)))) + np.sum( beta.dot(B_zeta.T).dot(np.diag(-0.5*(dS2[:,lj]/(S2**(1.5))))).dot(z))  
+    #dlogFucj = (0.5*(beta**2)/Lambda2 - (Lambda2/tau2)/(1 + Lambda2/tau2) - 0.5*np.sum(dS2/(np.tile(S2.T, [p,1]).T), axis = 0) - 
+    #           0.5*np.sum((np.tile(z*z, [p,1]).T*(-dS2/np.tile((S2**2), [p,1]).T)), axis = 0) + 
+    #           (beta*((B_zeta*(-0.5)*(dS2/np.tile(S2**1.5, [p,1]).T)).T).dot(z)))
     return(dlogFucj)
 
 def Delta_theta(vartheta_t, B, n, z, p, tBB, betaBt, BoB):
@@ -103,12 +108,18 @@ def Delta_theta(vartheta_t, B, n, z, p, tBB, betaBt, BoB):
     
     return(np.append(grad_beta, np.append(grad_lambda, grad_tau)))
 
-def log_density(z, u,  beta, B, p,  n, S, S2, tBB, theta, betaBt):   
-    return (- 0.5*np.sum(np.log(S2))- 0.5*z.dot((1/S2)*z)+ 
-            betaBt.dot(z*(1/S)) - 
-            0.5*beta.T.dot(tBB).dot(beta) - 
-            0.5/np.exp(u)*np.sum(beta**2) - 
-            0.5*u*(p-1)  - np.sqrt(np.exp(u)/theta))
+def log_density(S, B, beta, Lambda, log_tau, z, p):
+    Lambda2 = Lambda**2
+    tau2 = np.exp(log_tau)**2
+    S2 = S**2
+    term1 = - 0.5*np.sum(np.log(S2))
+    term2 = -0.5*np.sum(((z - S*(B.dot(beta)))**2)*(1/S2))
+    term3 = + 0.5*np.sum(Lambda2)
+    term4 = -0.5*np.sum((beta**2)/(Lambda2))
+    term5 = -(p-1)*log_tau
+    term6 = - np.sum(np.log(1+Lambda2/tau2))
+    term7 = - np.log(1 + tau2)
+    return(term1 + term2 + term3 + term4 + term5 + term6 + term7)
 
 def Leapfrog(theta, r, epsilon, n, z, p, B, tBB, betaBt):
     
@@ -167,11 +178,11 @@ for m in tqdm(range(1, M)):
                                               B_zeta, tBB, 
                                               betaBt)
     
-    dS2, ddS2, S2, S = generate_dS2_ddS2_S2_S(theta_tilde[m][p:2*p], BoB)
+    dS2, ddS2, S2, S = generate_dS2_ddS2_S2_S(np.exp(0.5*theta_tilde[m][p:2*p]), BoB)
     betaBt = theta_tilde[m][0:p].dot(B_zeta.T)
     
     # probability that proposal is accepted
-    log_dens[m] = log_density(z, theta_tilde[m][p],  theta_tilde[m][0:p], B_zeta, p,  n, S, S2, tBB, theta_prior, betaBt)
+    log_dens[m] = log_density(S, B_zeta, theta_tilde[m][0:p], np.exp(0.5*theta_tilde[m][p:2*p]), theta_tilde[m][0:p], z, p)
     alpha[m] = min([1, (np.exp(log_dens[m] - r_tilde[m].dot(r_tilde[m].T)*1/2))/np.exp((log_dens[m] - r0[m].dot(r0[m].T)*1/2))])
     
     decision = np.random.uniform(0,1,1)

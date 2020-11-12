@@ -72,6 +72,6 @@ def log_density(z, u,  beta, B, p,  n, S, S2, tBB, theta, betaBt):
 def multivariate_normal(x, d, mean, covariance):
     """pdf of the multivariate normal distribution."""
     x_m = x - mean
-    return (1. / (np.sqrt((2 * np.pi)**d * np.linalg.det(covariance))) * 
+    return (1. / (np.sqrt((2 * np.pi)**d*np.linalg.det(covariance))) * 
             np.exp(-((x_m.T).dot(np.linalg.inv(covariance)).dot(x_m)) / 2))
 
