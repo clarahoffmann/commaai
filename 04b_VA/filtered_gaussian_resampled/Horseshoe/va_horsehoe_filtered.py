@@ -113,7 +113,6 @@ for i in tqdm(range(iterations)):
     # 3. Compute gradient of beta, lambda_j, and tau
     gradient_h_t = hlp.Delta_theta(vartheta_t, B_zeta, n, z, p, tBB, betaBt_t, BoB)
     
-    
     # Compute inverse with Woodbury formula.
     inv = np.linalg.inv(D_t.dot(D_t))
     inv2 = np.linalg.inv(np.identity(k) + B_t.T.dot(inv).dot(B_t))
@@ -148,7 +147,7 @@ for i in tqdm(range(iterations)):
     
     # 5. compute stopping criterion
     beta_t = vartheta_t_transf[0:p].reshape(p,)
-    Lambda_t = vartheta_t_transf[p:2*p].reshape(p,)
+    Lambda_t = np.exp(0.5*vartheta_t_transf[p:2*p].reshape(p,))
     log_tau_t = vartheta_t_transf[2*p]
     betaBt_t = beta_t.dot(B_zeta.T) 
     

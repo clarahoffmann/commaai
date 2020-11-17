@@ -47,7 +47,7 @@ def delta_1_log_tau(p, log_tau, Lambda):
 def Delta_theta(vartheta_t, B, n, z, p, tBB, betaBt, BoB):
     vartheta_new = vartheta_t.copy()
     beta_t = vartheta_new[0:p].reshape(p,)
-    Lambda_t = np.sqrt(np.exp(vartheta_new[p:2*p].reshape(p,)))
+    Lambda_t = np.exp(0.5*vartheta_new[p:2*p].reshape(p,))
     log_tau_t = vartheta_new[2*p]
 
     dS2, ddS2, S2, S = generate_dS2_ddS2_S2_S(Lambda_t, BoB)
