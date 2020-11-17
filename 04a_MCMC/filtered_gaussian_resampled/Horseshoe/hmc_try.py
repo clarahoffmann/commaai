@@ -78,35 +78,43 @@ def delta_1_lambda(Lambda, beta, B_zeta, dS2, ddS2, S2, S, z, tau):
     Lambda2 = Lambda**2
     tau2 = tau**2
     dlogFucj = np.zeros(p)
-    for lj in tqdm(range(0,p)):
-        dlogFucj[lj] = 0.5*(beta[lj]**2)/Lambda2[lj] - (Lambda2[lj]/tau2)/(1 + Lambda2[lj]/tau2) - 0.5*np.sum(dS2[:,lj]/S2) - 0.5*np.sum((z*z*(-dS2[:,lj]/(S2**2)))) + np.sum( beta.dot(B_zeta.T).dot(np.diag(-0.5*(dS2[:,lj]/(S2**(1.5))))).dot(z))  
-    #dlogFucj = (0.5*(beta**2)/Lambda2 - (Lambda2/tau2)/(1 + Lambda2/tau2) - 0.5*np.sum(dS2/(np.tile(S2.T, [p,1]).T), axis = 0) - 
-    #           0.5*np.sum((np.tile(z*z, [p,1]).T*(-dS2/np.tile((S2**2), [p,1]).T)), axis = 0) + 
-    #           (beta*((B_zeta*(-0.5)*(dS2/np.tile(S2**1.5, [p,1]).T)).T).dot(z)))
+    #for lj in tqdm(range(0,p)):
+    #    dlogFucj[lj] = 0.5*(beta[lj]**2)/Lambda2[lj] - (Lambda2[lj]/tau2)/(1 + Lambda2[lj]/tau2) - 0.5*np.sum(dS2[:,lj]/S2) - 0.5*np.sum((z*z*(-dS2[:,lj]/(S2**2)))) + np.sum( beta.dot(B_zeta.T).dot(np.diag(-0.5*(dS2[:,lj]/(S2**(1.5))))).dot(z))  
+    dlogFucj = (0.5*(beta**2)/Lambda2 - (Lambda2/tau2)/(1 + Lambda2/tau2) - 0.5*np.sum(dS2/(np.tile(S2.T, [p,1]).T), axis = 0) - 
+               0.5*np.sum((np.tile(z*z, [p,1]).T*(-dS2/np.tile((S2**2), [p,1]).T)), axis = 0) + 
+               (beta*((B_zeta*(-0.5)*(dS2/np.tile(S2**1.5, [p,1]).T)).T).dot(z)))
     return(dlogFucj)
 
 def Delta_theta(vartheta_t, B, n, z, p, tBB, betaBt, BoB):
     vartheta_new = vartheta_t.copy()
     beta_t = vartheta_new[0:p].reshape(p,)
-    Lambda_t = vartheta_new[p:2*p]
+    Lambda_t = np.exp(0.5*vartheta_new[p:2*p])
     log_tau_t = vartheta_new[2*p]
 
     dS2, ddS2, S2, S = generate_dS2_ddS2_S2_S(Lambda_t, BoB)
     
     # Gradient w.r.t. beta
-    #grad_beta = delta_beta(z, S, B, Lambda_t, beta)
+    #grad_beta = delta_beta(z, S, B, Lambda_t, beta_t)
     
     #grad_lambda = delta_1_lambda(Lambda_t, beta_t, B, dS2, ddS2, S2, S, z, np.exp(log_tau_t))
     # Gradient w.r.t. tau
     #grad_tau = delta_1_log_tau(p, log_tau_t, Lambda_t)
     
-    ret_id1 = delta_beta.remote(z, S, B, Lambda_t, beta)
+    ret_id1 = delta_beta.remote(z, S, B, Lambda_t, beta_t)
     ret_id2 = delta_1_lambda.remote(Lambda_t, beta_t, B, dS2, ddS2, S2, S, z, np.exp(log_tau_t))
     ret_id3 = delta_1_log_tau.remote(p, log_tau_t, Lambda_t)
     grad_beta, grad_lambda, grad_tau = ray.get([ret_id1, ret_id2, ret_id3])
     #print(grad_beta, grad_lambda, grad_tau)
     
     return(np.append(grad_beta, np.append(grad_lambda, grad_tau)))
+
+# wrong log density!!!!
+'''def log_density(z, u,  beta, B, p,  n, S, S2, tBB, theta, betaBt):   
+    return (- 0.5*np.sum(np.log(S2))- 0.5*z.dot((1/S2)*z)+ 
+            betaBt.dot(z*(1/S)) - 
+            0.5*beta.T.dot(tBB).dot(beta) - 
+            0.5/np.exp(u)*np.sum(beta**2) - 
+            0.5*u*(p-1)  - np.sqrt(np.exp(u)/theta))'''
 
 def log_density(S, B, beta, Lambda, log_tau, z, p):
     Lambda2 = Lambda**2
@@ -182,7 +190,7 @@ for m in tqdm(range(1, M)):
     betaBt = theta_tilde[m][0:p].dot(B_zeta.T)
     
     # probability that proposal is accepted
-    log_dens[m] = log_density(S, B_zeta, theta_tilde[m][0:p], np.exp(0.5*theta_tilde[m][p:2*p]), theta_tilde[m][0:p], z, p)
+    log_dens[m] = log_density(S, B_zeta, theta_tilde[m][0:p], np.exp(0.5*theta_tilde[m][p:2*p]), theta_tilde[m][p], z, p)
     alpha[m] = min([1, (np.exp(log_dens[m] - r_tilde[m].dot(r_tilde[m].T)*1/2))/np.exp((log_dens[m] - r0[m].dot(r0[m].T)*1/2))])
     
     decision = np.random.uniform(0,1,1)
@@ -196,8 +204,6 @@ for m in tqdm(range(1, M)):
         r_m[m + 1] = - r_tilde[m - 1]
         acc.append(0)
         all_thetas.append(np.array(theta_m_1[m + 1]))
-    
-    if m%100 == 0:
-        np.save('../../../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/hmc_horseshoe.npy', all_thetas)
-
-np.save('../../../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/hmc_horseshoe.npy', all_thetas)
+    if (m % 100 == 0):
+        np.save('../../../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/all_thetas.npy', all_thetas)
+        np.save('../../../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/acc.npy', acc)
