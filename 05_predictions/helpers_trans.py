@@ -129,10 +129,12 @@ def bring_df_to_correct_format(result, grid):
 
 def find_closest_element(y: float, arr: np.ndarray):
     index = np.searchsorted(arr,y)
-    if index >= 1:
+    if index >= 1 and index < len(arr):
         res = [arr[index - 1], arr[index]]
+    elif index == len(arr) :
+        return np.array(index - 1)
     else:
-        return np.array(index)
+        return index
 
     if res[0] == res[1]:
         return np.array(index - 1)
@@ -140,6 +142,20 @@ def find_closest_element(y: float, arr: np.ndarray):
         diff_pre = np.abs(y-res[0])
         diff_aft = np.abs(y-res[1])
         if diff_pre == diff_aft:
-            return np.array(index - 1, index), 
+            return np.array(index - 1)
         else:
             return index - 1 if diff_pre < diff_aft else index
+        
+def density_at_true_value(density, true_y, true_z, B_zeta, tau_sq, beta_t):
+    
+    axes = np.array(density['axes'])
+    p_y_y0 = [density.loc[find_closest_element(y_i,density['axes'])]['pdf']  for y_i in true_y]
+    
+    f_eta_x0 = B_zeta.dot(beta_t)
+    s_0_hat = np.sqrt(1 + tau_sq*np.array([B_zeta[j,:].T.dot(B_zeta[j,:]) for j in range(0,n)]))
+    phi_1_z = np.array([scipy.stats.norm(0, 1).pdf(z_i) for z_i in true_z])
+    term_1 = (true_z - s_0_hat*f_eta_x0)/(s_0_hat)
+    term_2 = np.array([scipy.stats.norm(0, 1).pdf(z_i) for z_i in term_1])
+    p_y0_x0 = (p_y_y0/phi_1_z)*(1/s_0_hat)*term_2
+    
+    return p_y0_x0

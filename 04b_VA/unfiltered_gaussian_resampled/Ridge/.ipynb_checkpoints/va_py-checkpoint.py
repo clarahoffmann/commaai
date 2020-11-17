@@ -169,6 +169,6 @@ for i in tqdm(range(iterations)):
     
 np.save('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/lower_bounds.npy', lower_bounds)
 np.save('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/vartheta.npy', np.array(all_varthetas))
-np.save('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/Ridge/mu_ts.npy', mu_ts)
-np.save('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/Ridge/d_ts.npy', d_ts)
-np.save('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/Ridge/B_ts.npy', B_ts)
+np.save('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/mu_ts.npy', mu_ts)
+np.save('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/d_ts.npy', d_ts)
+np.save('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/B_ts.npy', B_ts)

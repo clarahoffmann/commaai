@@ -62,12 +62,13 @@ def Delta_D(gradient_h_t, epsilon_t, D_t, d_t,p, BBD_inv):
 
 def log_density(z, u,  beta, B, p,  n, S, S2, tBB, theta, betaBt):   
     return (
-          - 0.5*sum(np.log(S2))
+          - 0.5*np.sum(np.log(S2))
           - 0.5*z.dot((1/S2)*z) + betaBt.dot(z*(1/S)) 
           - 0.5*beta.T.dot(tBB).dot(beta) 
           - 0.5/np.exp(u)*np.sum(beta**2) 
           - 0.5*u*(p-1) 
           - np.sqrt(np.exp(u)/theta))
+
 
 def multivariate_normal(x, d, mean, covariance):
     """pdf of the multivariate normal distribution."""
