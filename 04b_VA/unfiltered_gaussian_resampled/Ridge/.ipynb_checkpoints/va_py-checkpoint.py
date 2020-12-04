@@ -115,7 +115,7 @@ for i in tqdm(range(iterations)):
     gradient_h_t = hlp.Delta_theta(vartheta_t, B_zeta, n, z, p, tBB, betaBt_t, theta, W)
     
     # Compute inverse with Woodbury formula.
-    inv = np.linalg.inv(D_t.dot(D_t))
+    inv = np.diag(1/np.diag(D_t**2))
     inv2 = np.linalg.inv(np.identity(k) + B_t.T.dot(inv).dot(B_t))
     BBD_inv = inv - multi_dot([inv, B_t, inv2, B_t.T, inv])
     

@@ -2,11 +2,11 @@ import numpy as np
 import math
 from numpy.linalg import multi_dot
 
-def generate_z(mean_epsilon,var_epsilon ):
-    return np.random.multivariate_normal(mean_epsilon,var_epsilon, 1).T
+def generate_z(mean_epsilon,var_epsilon, n):
+    return np.random.multivariate_normal(mean_epsilon,var_epsilon, n)
 
-def generate_epsilon(mean_z, var_z):
-    return np.random.multivariate_normal(mean_z,var_z, 1).T
+def generate_epsilon(mean_z, var_z, n):
+    return np.random.multivariate_normal(mean_z,var_z, n)
 
 def delta_beta(z, u, B, S, beta, tBB):
     return((z*(1/S)).dot(B) - beta.T.dot(tBB) - beta/np.exp(u))
@@ -49,15 +49,11 @@ def Delta_mu(gradient_h_t, BBD_inv, z_t, d_t, epsilon_t, B_t):
 
 def Delta_B(B_zeta,n,z, p, B_t, gradient_h_t, z_t,D_t, d_t, epsilon_t, BBD_inv):
     gradient_h = (gradient_h_t.reshape(p+1,1)).copy()
-    return( gradient_h.dot(z_t.T) 
-           + BBD_inv.dot(B_t.dot(z_t) 
-           + (d_t*epsilon_t)).dot(z_t.T))
+    return( gradient_h.dot(z_t.T) + BBD_inv.dot(B_t.dot(z_t) + (d_t*epsilon_t)).dot(z_t.T))
 
-def Delta_D(gradient_h_t, epsilon_t, D_t, d_t,p, BBD_inv):
-    gradient_h_diag = np.diag((gradient_h_t.reshape(p+1))).copy()
-    return(
-    gradient_h_diag.dot(epsilon_t)) 
-    + (multi_dot([BBD_inv, (B.dot(z)  + (d_t*epsilon_t)), epsilon]))
+def Delta_D(gradient_h_t, epsilon_t, D_t, d_t,p, BBD_inv, B_t, z_t):
+    gradient_h_t_r = gradient_h_t.copy().reshape(p+1,1)
+    return(np.diag(gradient_h_t_r.dot(epsilon_t.T) + BBD_inv.dot(((B_t.dot(z_t) + (d_t*epsilon_t)).dot(epsilon_t.T)))))
     
 
 def log_density(z, u,  beta, B, p,  n, S, S2, tBB, theta, betaBt):   

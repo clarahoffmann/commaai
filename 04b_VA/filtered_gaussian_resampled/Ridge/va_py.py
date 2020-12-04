@@ -47,7 +47,7 @@ S2 = S**2
 m = p + 1
 
 # number of factors in the factored covariance representation
-k = m - 2
+k = m 
 
 mu_t = np.array([random() for i in range(0,m)]).reshape(m,1)
 # B is a lower triangle m x k matrix and is the first component of the 
@@ -98,7 +98,7 @@ d_ts = []
 B_ts = []
 t = 0
 
-iterations = 50000
+iterations = 15000
 for i in tqdm(range(iterations)):
     
     # 1. Generate epsilon_t and z_t
@@ -161,8 +161,8 @@ for i in tqdm(range(iterations)):
     # increase time count
     t = t+1
 
-np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/lower_bounds.npy', lower_bounds)
-np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/vartheta.npy', np.array(all_varthetas))
-np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/mu_ts.npy', mu_ts)
-np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/d_ts.npy', d_ts)
-np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/B_ts.npy', B_ts)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/lower_bounds2.npy', lower_bounds)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/vartheta.npy2', np.array(all_varthetas))
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/mu_ts2.npy', mu_ts)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/d_ts2.npy', d_ts)
+np.save('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/B_ts2.npy', B_ts)
