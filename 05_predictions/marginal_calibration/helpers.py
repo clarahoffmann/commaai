@@ -32,11 +32,26 @@ def predict_single_density(x, grid, p_y_y0, part_1, phi_1_z, beta, tau_sq, Lambd
 
     f_eta_x0 = psi_x0.dot(beta)
 
-    if method == 'va_ridge' or method == 'hmc_ridge':
+    if method == 'va_ridge':
         s_0_hat = (1 + tau_sq*psi_x0.dot(psi_x0))**(-0.5)
+    
+    elif method == 'hmc_ridge':
+        s_0_hat_js = []
+        for tau_j in tau_sq:
+            s_0_hat_j = (1 + tau_j*psi_x0.dot(psi_x0))**(-0.5)
+            s_0_hat_js.append(s_0_hat_j)
+        s_0_hat = np.mean(np.array(s_0_hat_js))
 
-    elif method == 'va_horseshoe' or method == 'hmc_horseshoe':
+    elif method == 'va_horseshoe':
         s_0_hat = (1 + (psi_x0*Lambda**2).dot(psi_x0))**(-0.5)
+        
+    elif method == 'hmc_horseshoe':
+        s_0_hat_js = []
+        for Lambda_j in Lambda:
+            s_0_hat_j = (1 + (psi_x0*Lambda_j**2).dot(psi_x0))**(-0.5)
+            s_0_hat_js.append(s_0_hat_j)
+        s_0_hat = np.mean(np.array(s_0_hat_js))
+        
 
     part_0 = s_0_hat*f_eta_x0
 
