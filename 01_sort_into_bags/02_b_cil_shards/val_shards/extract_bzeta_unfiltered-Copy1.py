@@ -4,14 +4,16 @@ import imageio
 import pandas as pd
 from tqdm import tqdm
 import scipy.misc
+from helpers import find_closest_element, Fy
+from scipy.stats import norm
 
 test_filenames = np.load('test_files_run2.npy')
-filepath = r'../../../data/commaai/destination/'
-density_path = '../../../data/commaai/density/gaussian_density.csv'
+filepath = r'../../../../data/commaai/destination/'
+density_path = '../../../../data/commaai/density/gaussian_density.csv'
 density = pd.read_csv(density_path)
-checkpoint_path = '../../../data/models/20201021_unrestr_gaussian_resampled/'
-extracted_coefficients_directory_Bzeta = '../../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/Bzeta/'
-destination = '../../../data/commaai/test_files/val_files_unfiltered/'
+checkpoint_path = '../../../../data/models/20201021_unrestr_gaussian_resampled/'
+extracted_coefficients_directory_Bzeta = '../../../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/Bzeta/'
+destination = '../../../../data/commaai/test_files/val_files_unfiltered/'
 
 train_vid_files = [str(filepath + test_filenames[i] + '.hevc') for i in range(len(test_filenames))]
 train_yaw_files = [str(filepath + test_filenames[i] + '.value') for i in range(len(test_filenames))]
@@ -71,8 +73,9 @@ for j in tqdm(range(0, len(train_vid_files))):
     i = 0
     for img in images:
         filename = str(destination + 'image' + str(i) + '_' + str(j) + '.png')
-        scipy.misc.imsave(filename, img)
-        df.append({'path': filename, 'true_y': yaw[i], 'true_z': trans_label[i]}, ignore_index=True)
+        imageio.imwrite(filename, img)
+        df = df.append({'path': filename, 'true_y': yaw[i], 'true_z': trans_label[i]}, ignore_index=True)
         i +=  1
+    df.to_csv('df_paths.csv')
 
 df.to_csv('df_paths.csv')
