@@ -79,10 +79,10 @@ class density_predictor():
             self.va_ridge_dir = '../../../data/commaai/va/filtered_gaussian_resampled/Ridge/'
             self.mu_t_va = np.genfromtxt(self.va_ridge_dir + 'mu_t_va.csv', delimiter = ',')
             self.iterations = self.mu_t_va.shape[0]
-            self.beta = np.mean(self.mu_t_va[int(0.9*self.iterations):self.iterations,0:10], axis = 0)
-            self.beta_sd = np.std(self.mu_t_va[int(0.9*self.iterations):self.iterations,0:10], axis = 0)
-            self.tau_sq = np.mean(np.exp(self.mu_t_va[int(0.9*self.iterations):self.iterations,10]), axis = 0)
-            self.tau_sq_sd = np.std(np.exp(self.mu_t_va[int(0.9*self.iterations):self.iterations,10]), axis = 0)
+            self.beta = self.mu_t_va[0:10]
+            #self.beta_sd = np.std(0:10], axis = 0)
+            self.tau_sq = np.exp(self.mu_t_va[10])
+            #self.tau_sq_sd = np.std(np.exp(self.mu_t_va[int(0.9*self.iterations):self.iterations,10]), axis = 0)
             
             print('computing densities for each observation')
             self.densities_va = []
@@ -95,10 +95,13 @@ class density_predictor():
             print('computing mean prediction for each observation')
             # mean prediction
             self.pred_y_va_ridge = []
+            self.max_dens = [] 
             for i in tqdm(range(0, self.B_zeta.shape[0])):
                 self.y_i = trapz(self.densities_va[i]*self.grid, self.grid)
                 self.pred_y_va_ridge.append(self.y_i)
+                self.max_dens.append(self.grid[self.densities_va[i] ==  max(self.densities_va[i])])
             self.pred_y_va_ridge = np.array(self.pred_y_va_ridge)
+            self.max_dens = np.array(self.max_dens)
             
             print('computing variance prediction for each observation')
             # variance prediction
@@ -111,7 +114,8 @@ class density_predictor():
             
             return({'densities': self.densities_va, 
                     'mean predictions': self.pred_y_va_ridge, 
-                    'variance preditcion': self.pred_y_va_ridge_var})
+                    'variance preditcion': self.pred_y_va_ridge_var,
+                   'max dens prediction': self.max_dens})
         
         if self.method == 'va_horseshoe':
         

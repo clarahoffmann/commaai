@@ -76,8 +76,8 @@ class density_predictor():
         
         if self.method == 'va_ridge':
             
-            self.va_ridge_dir = '../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/'
-            self.mu_t_va = np.load('../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/mu_ts23_factor_50.npy')
+            self.va_ridge_dir = '../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/'
+            self.mu_t_va = np.load('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/mu_ts23_factor_50.npy')
             self.iterations = self.mu_t_va.shape[0]
             self.beta = np.mean(self.mu_t_va[int(0.9*self.iterations):self.iterations,0:10], axis = 0)
             self.beta_sd = np.std(self.mu_t_va[int(0.9*self.iterations):self.iterations,0:10], axis = 0)
@@ -93,15 +93,12 @@ class density_predictor():
                 self.densities_va.append(self.dens)
             
             print('computing mean prediction for each observation')
-            # mean prediction & maximum density prediction
+            # mean prediction
             self.pred_y_va_ridge = []
-            self.max_dens = []
             for i in tqdm(range(0, self.B_zeta.shape[0])):
                 self.y_i = trapz(self.densities_va[i]*self.grid, self.grid)
                 self.pred_y_va_ridge.append(self.y_i)
-                self.max_dens.append(self.grid[self.densities_va[i] ==  max(self.densities_va[i])])
             self.pred_y_va_ridge = np.array(self.pred_y_va_ridge)
-            self.max_dens = np.array(self.max_dens)
             
             print('computing variance prediction for each observation')
             # variance prediction
@@ -113,13 +110,12 @@ class density_predictor():
             self.pred_y_va_ridge_var = np.array(self.pred_y_va_ridge_var)
             
             return({'densities': self.densities_va, 
-                    'mean predictions': self.pred_y_va_ridge, 
-                    'variance preditcion': self.pred_y_va_ridge_var,
-                   'max dens prediction': np.array(self.max_dens)})
+                    'mean prediction': self.pred_y_va_ridge, 
+                    'variance prediction': self.pred_y_va_ridge_var})
         
         if self.method == 'va_horseshoe':
         
-            self.va_horse_dir = '../../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/'
+            self.va_horse_dir = '../../../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/'
             self.mu_t_va = np.load(self.va_horse_dir + 'mu_ts2_new_dev_1.npy').reshape(-1, 21)
             self.iter = self.mu_t_va.shape[0]
             self.beta = np.mean(self.mu_t_va[int(0.9*self.iter):,0:10], axis = 0)
@@ -136,15 +132,10 @@ class density_predictor():
                 self.densities_va.append(self.dens)
                
             self.pred_y_va_horse = []
-            self.max_dens = []
             for i in tqdm(range(0, self.B_zeta.shape[0])):
                 self.y_i = trapz(self.densities_va[i]*self.grid, self.grid)
                 self.pred_y_va_horse.append(self.y_i)
-                self.max_dens.append(self.grid[self.densities_va[i] ==  max(self.densities_va[i])])
-            
-            self.pred_y_va_horse = np.array(self.pred_y_va_horse)
-            self.max_dens = np.array(self.max_dens)
-            
+                
             # variance prediction
             self.pred_y_va_horse_var = []
             for i in tqdm(range(0, self.B_zeta.shape[0])):
@@ -153,12 +144,11 @@ class density_predictor():
                 
             return({'densities': self.densities_va, 
                     'mean prediction': self.pred_y_va_horse, 
-                    'variance prediction': self.pred_y_va_horse_var,
-                   'max dens prediction': np.array(self.max_dens)})
+                    'variance prediction': self.pred_y_va_horse_var})
         
         if self.method == 'hmc_ridge':
             
-            self.hmc_ridge_dir = '../../../data/commaai/mcmc/unfiltered_gaussian_resampled/Ridge/'
+            self.hmc_ridge_dir = '../../../../data/commaai/mcmc/unfiltered_gaussian_resampled/Ridge/'
             self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas_L100_5000.npy')[500:,:]
             self.beta = np.mean(self.mu_t_hmc[:,0:10], axis = 0)
             self.tau_sq = np.exp(self.mu_t_hmc[:,10])
@@ -172,12 +162,9 @@ class density_predictor():
                 self.densities_va.append(self.dens)
 
             self.pred_y_hmc_ridge = []
-            self.max_dens = []
             for i in tqdm(range(0, self.B_zeta.shape[0])):
                 self.y_i = trapz(self.densities_va[i]*self.grid, self.grid)
                 self.pred_y_hmc_ridge.append(self.y_i)
-                self.max_dens.append(self.grid[self.densities_va[i] ==  max(self.densities_va[i])])
-            
 
             # variance prediction
             self.pred_y_hmc_ridge_var = []
@@ -187,11 +174,10 @@ class density_predictor():
 
             return({'densities': self.densities_va, 
                     'mean prediction': np.array(self.pred_y_hmc_ridge), 
-                    'variance prediction': np.array(self.pred_y_hmc_ridge_var),
-                   'max dens prediction': np.array(self.max_dens)})
+                    'variance prediction': np.array(self.pred_y_hmc_ridge_var)})
 
         if self.method == 'hmc_horseshoe':
-            self.hmc_ridge_dir = '../../../data/commaai/mcmc/unfiltered_gaussian_resampled/Horseshoe/'
+            self.hmc_ridge_dir = '../../../../data/commaai/mcmc/unfiltered_gaussian_resampled/Horseshoe/'
             self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas_try.npy').reshape(-1, 21)
             self.beta = np.mean(self.mu_t_hmc[2000:,0:10], axis = 0)
             self.Lambda = np.exp(0.5*self.mu_t_hmc[2000:,10:20])
@@ -206,11 +192,9 @@ class density_predictor():
                 self.densities_va.append(self.dens)
 
             self.pred_y_hmc_ridge = []
-            self.max_dens = []
             for i in tqdm(range(0, self.B_zeta.shape[0])):
                 self.y_i = trapz(self.densities_va[i]*self.grid, self.grid)
                 self.pred_y_hmc_ridge.append(self.y_i)
-                self.max_dens.append(self.grid[self.densities_va[i] ==  max(self.densities_va[i])])
 
             # variance prediction
             self.pred_y_hmc_ridge_var = []
@@ -220,5 +204,4 @@ class density_predictor():
        
             return({'densities': self.densities_va, 
                     'mean prediction': np.array(self.pred_y_hmc_ridge), 
-                    'variance prediction': np.array(self.pred_y_hmc_ridge_var),
-                   'max dens prediction': np.array(self.max_dens)})
+                    'variance prediction': np.array(self.pred_y_hmc_ridge_var)})
