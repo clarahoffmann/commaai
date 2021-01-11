@@ -346,8 +346,10 @@ class DensityPredictor:
             self.va_ridge_dir = '../../../data/commaai/va/filtered_gaussian_resampled/Ridge/'
             self.mu_t_va = np.genfromtxt(self.va_ridge_dir + 'mu_t_va.csv', delimiter = ',')
             self.iter = self.mu_t_va.shape[0]
-            self.beta = np.mean(self.mu_t_va[int(0.9*self.iter):self.iter,0:10], axis = 0)
-            self.tau_sq = np.exp(np.mean(self.mu_t_va[int(0.9*self.iter):self.iter,10], axis = 0))
+            self.beta = self.mu_t_va[0:10]
+            self.tau_sq = np.exp(self.mu_t_va[10])
+            #self.beta = np.mean(self.mu_t_va[int(0.9*self.iter):self.iter,0:10], axis = 0)
+            #self.tau_sq = np.exp(np.mean(self.mu_t_va[int(0.9*self.iter):self.iter,10], axis = 0))
             print('chose variational approximation with ridge prior as method')
             
         elif (method == 'hmc_horseshoe') & (self.model == 'precise'):

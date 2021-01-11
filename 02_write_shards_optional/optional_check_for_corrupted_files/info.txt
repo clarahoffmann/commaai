@@ -1,0 +1,6 @@
+Sometimes tfrecords files can be corrupted if there occurs 
+an error somewhere during writing the tfrecords file. 
+This can be visible when training the DNN fails.
+If this seems to be the case, the corrupted tfrecords file can be found using
+the 'check_corrupted_file.ipynb'. 
+The corrupted file can just be deleted.
