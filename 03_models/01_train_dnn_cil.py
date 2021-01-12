@@ -1,21 +1,26 @@
+######### Train Precise Learner #######
+# Author: Clara Hoffmann
+# Last changed: 12.01.2021
+# With this code you can train the precise learner
+# using a tfestimator that trains on the training shards
+# created previously.
+# The models are saved as checkpoint files in the model dir.
+# Stopping is done by monitoring the validation loss
+# by loading the checkpoint files into tensorboard.
+# Stop the model when the validation loss shows no
+# further improvement
+
 import keras
-import numpy as np
 import glob 
 import os
-from keras.models import Sequential
-from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten, BatchNormalization
-import matplotlib.pyplot as plt
 import tensorflow as tf
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
 import random
-import cv2
-from keras import backend
-from scipy.stats import norm
 from utils import imgs_input_fn, imgs_input_fn_val, rmse, build_model, _parse_function_train, _parse_function_val
 
 #define paths 
+# directory where checkpoints should be saved
 model_dir = '../../../data/models/20201021_unrestr_gaussian_resampled/'
+# directory where shards were saved
 shard_path = '../../../data/commaai/training_files/unrestricted_gauss_dens_resampled/'
 val_path = '../../../data/commaai/test_files/'
 
@@ -59,7 +64,8 @@ cust_train_input_fn = lambda: imgs_input_fn(shard_files)
 cust_val_input_fn = lambda: imgs_input_fn_val(val_files)
 
 # specify training and evaluation spec
-train_spec = tf.estimator.TrainSpec(input_fn = cust_train_input_fn, max_steps = STEPS)#, hooks = [early_stopping]
+train_spec = tf.estimator.TrainSpec(input_fn = cust_train_input_fn,
+                                    max_steps = STEPS)
 eval_spec = tf.estimator.EvalSpec(input_fn = cust_val_input_fn, 
                                   steps = 500) 
 # train and evaluate model

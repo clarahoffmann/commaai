@@ -1,22 +1,15 @@
+######### Obtain Bzeta for Imprecise Learner #######
+# Author: Clara Hoffmann
+# Last changed: 12.01.2021
+
+
 # load packages
-import os
-import glob
 import pandas as pd
 import tensorflow as tf
 import numpy as np
-from tensorflow import keras
-from keras import backend
-from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten, BatchNormalization
-import matplotlib.pyplot as plt
 from tqdm import tqdm
-from sklearn.metrics import mean_squared_error
-from math import sqrt
-from tqdm import tqdm
-import matplotlib.pyplot as plt
 from scipy.stats import norm
 import imageio
-import cv2
-import multiprocessing
 from utils import find_closest_element, Fy, build_model
 
 # path of model checkpoints

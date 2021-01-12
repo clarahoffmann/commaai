@@ -1,22 +1,36 @@
+######### Train Imprecise Learner #######
+# Author: Clara Hoffmann
+# Last changed: 12.01.2021
+# With this code you can train the precise learner
+# using a tfestimator that trains on the training shards
+# created previously. 
+# The models are saved as checkpoint files in the model dir.
+# Stopping is done by monitoring the validation loss
+# by loading the checkpoint files into tensorboard.
+# Stop the model when the validation loss shows no
+# further improvement
+
+
 # import packages
 import keras
-import numpy as np
 import glob 
 import os
-from keras.models import Sequential
-from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten, BatchNormalization
-#import matplotlib.pyplot as plt
 import tensorflow as tf
-#from tensorflow.compat.v1 import ConfigProto
-#from tensorflow.compat.v1 import InteractiveSession
 import random
-from keras import backend
-from utils_cpl import imgs_input_fn, imgs_input_fn_val, rmse, build_model, _parse_function_train, _parse_function_val
+from utils import imgs_input_fn, imgs_input_fn_val, rmse, build_model, _parse_function_train, _parse_function_val
 
-#define paths 
+#define paths
+# directory where checkpoints should be saved
 model_dir = '../../../data/models/20201027_filtered_gaussian_resampled/'
+# directory where shards were saved
 shard_path = '../../../data/commaai/training_files_filtered/tfrecords/'
 val_path = '../../../data/commaai/test_files/val_file_filtered/'
+
+
+c = 55000
+EPOCHS = 60
+STEPS = c*EPOCHS
+
 
 # read in shards from shard directory
 shard_files = glob.glob(os.path.join(shard_path, "*.tfrecords")) 
@@ -53,12 +67,9 @@ keras_estimator = tf.keras.estimator.model_to_estimator(
 cust_train_input_fn = lambda: imgs_input_fn(shard_files)
 cust_val_input_fn = lambda: imgs_input_fn_val(val_files)
 
-c = 55000
-EPOCHS = 60
-STEPS = c*EPOCHS
-
 # specify training and evaluation spec
-train_spec = tf.estimator.TrainSpec(input_fn = cust_train_input_fn, max_steps = STEPS)
+train_spec = tf.estimator.TrainSpec(input_fn = cust_train_input_fn, 
+                                    max_steps = STEPS)
 eval_spec = tf.estimator.EvalSpec(input_fn = cust_val_input_fn, 
                                   steps = 100) 
 
