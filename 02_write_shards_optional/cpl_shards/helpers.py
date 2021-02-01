@@ -11,8 +11,27 @@ def wrap_float(value):
 
 
 def Fy(y, density):
+    '''
+    Distribution function at y of numerical cdf
+    Input:
+        - y: scalar, value at which cdf should be evaluated
+        - density: dataframe with columns: axes, cdf
+    
+    Output: 
+        - integral: cdf at y
+    '''
     
     def find_closest_element(y: float, arr: np.ndarray):
+                '''
+    Find index of element closest to y from array arr
+    
+    Input:
+        - y: value to which we want to find the closest value
+        - arr: array in which we want to find the closest value
+    
+    Output:
+        - index: index where element is closest to y in arr
+    '''
         index = np.searchsorted(arr,y)
         
         if (index >= 1) & (index < arr.shape[0]):

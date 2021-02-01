@@ -4,6 +4,21 @@ import cv2
 import imageio
 
 def read_vid_angles(vid_path, value_path, t_path):
+    '''
+    Read frames from comma.ai 2k19 video files and
+    merge with associated angles
+    
+    Input: 
+        - vid_path: path of video file
+        - value_path: associated angle file
+        - t_path: device boot time file
+    
+    Output:
+        - rez_frames: resized and downsampled frames
+                      on 5 frames per second bases
+        - target_angles: associated steering angles y
+        - trans_label: associated transformed steering angles z
+    '''
     
     # read video
     vid = imageio.get_reader(vid_path,  'ffmpeg')
@@ -35,12 +50,21 @@ def read_vid_angles(vid_path, value_path, t_path):
     # get angles per frame
     target_angles = [angles.loc[find_closest_element(timestamps_frames[i], np.array(angles['t'])),'angle'] for i in range(0, len(timestamps_frames))]
     
-    print(len(rez_frames))
     trans_label = [ 0  for i in range(0, len(target_angles))] 
     
     return(rez_frames[::5], target_angles[::5], trans_label)
 
 def find_closest_element(y: float, arr: np.ndarray):
+    '''
+    Find index of element closest to y from array arr
+    
+    Input:
+        - y: value to which we want to find the closest value
+        - arr: array in which we want to find the closest value
+    
+    Output:
+        - index: index where element is closest to y in arr
+    '''
     index = np.searchsorted(arr,y)
     if (index >= 1) & (index < arr.shape[0]):
         res = [arr[index - 1], arr[index]]

@@ -30,20 +30,6 @@ keras_model = build_model()
 # load weights
 keras_model.load_weights(tf.train.latest_checkpoint(checkpoint_path)) 
 
-# get coefficients of last layer
-i = 0
-for layer in keras_model.layers: 
-    i += 1
-    if i == 20:
-        beta = layer.get_weights()
-        print(layer.get_config()) 
-        
-# last element of beta is bias, exclude this 
-# since copulas are location free -> beta_0 = 0
-beta_coeff = beta[0]
-# save
-np.savetxt(str(extracted_coefficients_directory_beta +"beta.csv"), beta_coeff, delimiter=",")
-
 ####### 2. Extract Basis Functions Bzeta #######
 
 # keras model for basis functions B_zeta
@@ -65,12 +51,12 @@ labels = []
 tr_labels = []
 B_zetas = []
 for i in tqdm(range(0,all_img_df.shape[0])): 
-    img = imageio.imread(str(img_path_base + all_img_df.loc[i,'path']))
-    img = cv2.resize(img, 
-                     dsize = (291,218), 
-                     interpolation = cv2.INTER_LINEAR)[76:142, 
-                                                       45:245,
-                                                       0:3].reshape(1,66,200,3)/255
+    img = imageio.imread(str(img_path_base + all_img_df.loc[i,'path']))/255
+    #img = cv2.resize(img, 
+                     #dsize = (291,218), 
+                     #interpolation = cv2.INTER_LINEAR)[76:142, 
+                     #                                  45:245,
+                     #                                  0:3].reshape(1,66,200,3)/255
     B_zeta = B_zeta_model.predict(img)
     label = all_img_df.loc[i,'angle']
     tr_label = norm.ppf(Fy(label, density))

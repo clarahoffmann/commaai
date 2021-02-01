@@ -1,4 +1,10 @@
+######### Write Training Shards for Imprecise Learner #######
+# Author: Clara Hoffmann
+# Last changed: 12.01.2021
+
 # Write training observations to training shards and resample
+
+# load packages
 import pandas as pd
 import matplotlib.pyplot as plt
 from helpers import wrap_int64, wrap_bytes, wrap_float, Fy
@@ -7,7 +13,7 @@ from scipy.stats import norm
 import numpy as np
 import tensorflow as tf
 import imageio
-import cv2
+#import cv2
 import random
 
 print('reading files')
@@ -84,7 +90,7 @@ for m in tqdm(range(0,int(30000/12))):
                         # load image
                         img = imageio.imread(current_file_ext)
                         # resize image and crop
-                        img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,:]
+                        #img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,:]
                         row = df.loc[df['path'] == current_file, ['angle', 'tr_angle']]
                         label = float(row['angle'])
                         tr_label =  float(row['tr_angle'])

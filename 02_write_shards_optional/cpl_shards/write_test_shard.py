@@ -1,4 +1,7 @@
-# Write test shard for cpl
+######### Write Validation Shards for the Precise Learner #######
+# Author: Clara Hoffmann
+# Last changed: 12.01.2021
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from helpers import wrap_int64, wrap_bytes, wrap_float, Fy
@@ -7,7 +10,7 @@ from scipy.stats import norm
 import numpy as np
 import tensorflow as tf
 import imageio
-import cv2
+#import cv2
 import random
 from helpers import *
 
@@ -45,7 +48,7 @@ with tf.io.TFRecordWriter(out_path_shard) as writer:
         current_file_ext = str( bag_path + current_file)
         img = imageio.imread(current_file_ext)
         # resize image and crop
-        img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,0:3]
+        #img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,0:3]
         
         # get y and z
         label = float(df.loc[i, 'angle'])
