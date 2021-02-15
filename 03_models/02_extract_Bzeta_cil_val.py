@@ -10,23 +10,23 @@ import numpy as np
 from tqdm import tqdm
 from scipy.stats import norm
 import imageio
-from utils import find_closest_element, Fy, build_model
+from utils import find_closest_element, Fy, build_model_bzeta
 
 # path of model checkpoints
-checkpoint_path = '../../../../data/models/20201021_unrestr_gaussian_resampled/'
-shard_path = '../../../../data/commaai/training_files/unrestricted_gauss_dens_resampled'
-extracted_coefficients_directory_beta = '../../../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/beta/'
-extracted_coefficients_directory_Bzeta = '../../../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/Bzeta/'
+checkpoint_path = '../../data/models/20201021_unrestr_gaussian_resampled/export/'
+shard_path = '../../data/commaai/training_files/unrestricted_gauss_dens_resampled'
+extracted_coefficients_directory_beta = '../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/beta/'
+extracted_coefficients_directory_Bzeta = '../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/Bzeta/'
 
 # build model and # load weights
 B_zeta_model = build_model_bzeta()
 B_zeta_model.load_weights(tf.train.latest_checkpoint(checkpoint_path))
 
 # all training images and paths
-path_all_imgs = '../../../../commaai_code/01_sort_into_bags/02_b_cil_shards/val_shards/df_paths.csv'
+path_all_imgs = '../../commaai_code/01_sort_into_bags/02_b_cil_shards/val_shards/df_paths.csv'
 all_img_df = pd.read_csv(path_all_imgs)
-img_path_base = '../../../../data/commaai/test_files/val_files_unfiltered/'
-density_path= '../../../../data/commaai/density/gaussian_density.csv'
+img_path_base = '../../data/commaai/test_files/val_files_unfiltered/'
+density_path= '../../data/commaai/density/gaussian_density.csv'
 density = pd.read_csv(density_path)
 all_img_df = all_img_df[np.abs(all_img_df['true_y']) < 40].reset_index()
 

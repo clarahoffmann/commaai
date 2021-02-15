@@ -20,8 +20,8 @@ import imageio
 import pandas as pd
 import png
 import csv
-from tqdm import tqdm
 from helpers import find_closest_element, read_vid_angles
+from tqdm import tqdm
 
 # path of video files
 vid_train_path = r'../../data/commaai/destination/'
@@ -49,22 +49,24 @@ train_vid_files = [str(filepath + train_filenames[i] + '.hevc') for i in range(l
 train_yaw_files = [str(filepath + train_filenames[i] + '.value') for i in range(len(train_filenames))]
 train_time_files = [str(filepath + train_filenames[i] + '.t') for i in range(len(train_filenames))]
 
-for j in tqdm(range(1274, 1275)): 
+#1276 - 1500
+for j in tqdm(range(980, 1001)): 
     
     # get single video file
     video_file = train_vid_files[j]
     angle_file = train_yaw_files[j]
     time_file = train_time_files[j]
     
+    #try:
     # get frames and associated angles from file
     images, yaw, trans_label = read_vid_angles(video_file, angle_file, time_file)
-    
+
     # sort each image into folder based on steering angle
     for i in range(0, images.shape[0]):
         img = images[i,:,:,:]
         label = yaw[i]
         tr_label = trans_label[i]
-        
+
         if abs(label) <= 5 :
             path = '../../data/commaai/train_bags_small/0/'
             filename = str(path + str(i) + '_' + str(j) + 'run1.png')
@@ -72,7 +74,7 @@ for j in tqdm(range(1274, 1275)):
                 writer = csv.writer(csvfile)
                 writer.writerow([filename, label, tr_label])
             plt.imsave(filename, img)
-        
+
         if abs(label) <= 10 and abs(label) > 5:
             path = '../../data/commaai/train_bags_small/1/'
             filename = str(path + str(i) + '_' + str(j) + 'run1.png')
@@ -80,7 +82,7 @@ for j in tqdm(range(1274, 1275)):
                 writer = csv.writer(csvfile)
                 writer.writerow([filename, label, tr_label])
             plt.imsave(filename, img)
-        
+
         elif abs(label) <= 20 and abs(label) > 10:
             path = '../../data/commaai/train_bags_small/2/'
             filename = str(path + str(i) + '_' + str(j) + 'run1.png')
@@ -88,7 +90,7 @@ for j in tqdm(range(1274, 1275)):
                 writer = csv.writer(csvfile)
                 writer.writerow([filename, label, tr_label])
             plt.imsave(filename, img)
-        
+
         elif abs(label) <= 30 and abs(label) > 20:
             path = '../../data/commaai/train_bags_small/3/'
             filename = str(path + str(i) + '_' + str(j) + 'run1.png')
@@ -96,7 +98,7 @@ for j in tqdm(range(1274, 1275)):
                 writer = csv.writer(csvfile)
                 writer.writerow([filename, label, tr_label])
             plt.imsave(filename, img)
-        
+
         elif abs(label) <= 40 and abs(label) > 30:
             path = '../../data/commaai/train_bags_small/4/'
             filename = str(path + str(i) + '_' + str(j) + 'run1.png')
@@ -104,7 +106,7 @@ for j in tqdm(range(1274, 1275)):
                 writer = csv.writer(csvfile)
                 writer.writerow([filename, label, tr_label])
             plt.imsave(filename, img)
-        
+
         elif abs(label) <= 50 and abs(label) > 40:
             path = '../../data/commaai/train_bags_small/5/'
             filename = str(path + str(i) + '_' + str(j) + 'run1.png')
@@ -112,7 +114,7 @@ for j in tqdm(range(1274, 1275)):
                 writer = csv.writer(csvfile)
                 writer.writerow([filename, label, tr_label])
             plt.imsave(filename, img)
-        
+
         elif abs(label) <= 60 and abs(label) > 50:
             path = '../../data/commaai/train_bags_small/6/'
             filename = str(path + str(i) + '_' + str(j) + 'run1.png')
@@ -120,3 +122,6 @@ for j in tqdm(range(1274, 1275)):
                 writer = csv.writer(csvfile)
                 writer.writerow([filename, label, tr_label])
             plt.imsave(filename, img)
+    #except:
+    #    print('error reading file number: ' + str(train_vid_files[j]))
+    #    pass
