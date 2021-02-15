@@ -183,7 +183,8 @@ class DensityPredictor:
             # load image
             img = imageio.imread(img_path)
             images.append(img)
-            img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,0:3].reshape(1,66,200,3)/255
+            #img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,0:3].reshape(1,66,200,3)/255
+            img = img.reshape(1,66,200,3)/255
             # predict Bzeta
             z_pred = self.z_model.predict(img)
             z_preds.append(z_pred)
@@ -206,7 +207,8 @@ class DensityPredictor:
                 # load image
                 img = imageio.imread(img_path)
                 images.append(img)
-                img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,0:3].reshape(1,66,200,3)/255
+                #img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,0:3].reshape(1,66,200,3)/255
+                img = img[:,:,0:3].reshape(1,66,200,3)/255
                 # predict Bzeta
                 B_zeta = self.Bzetamodel.predict(img)
                 B_zetas.append(B_zeta)

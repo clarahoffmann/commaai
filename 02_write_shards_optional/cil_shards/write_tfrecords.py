@@ -17,7 +17,7 @@ import imageio
 import random
 
 print('reading files')
-destination = '../../../data/commaai/training_files/filtered_gauss_dens_resampled_new_vers_buckets/'
+destination = '../../../data/commaai/training_files/unrestricted_gauss_dens_resampled/'
 bag_path = '../../../data/commaai/train_bags_2/'
 
 # read training indices

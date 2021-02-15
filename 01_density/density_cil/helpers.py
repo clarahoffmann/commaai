@@ -34,7 +34,7 @@ def find_closest_element(y: float, arr: np.ndarray):
             return index - 1 if diff_pre < diff_aft else index
 
 def Fy(y, density):
-        '''
+    '''
     Distribution function at y of numerical cdf
     Input:
         - y: scalar, value at which cdf should be evaluated

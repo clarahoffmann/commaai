@@ -21,10 +21,10 @@ from utils import imgs_input_fn, imgs_input_fn_val, rmse, build_model, _parse_fu
 
 #define paths
 # directory where checkpoints should be saved
-model_dir = '../../../data/models/20201027_filtered_gaussian_resampled/'
+model_dir = '../../data/models/20201027_filtered_gaussian_resampled/'
 # directory where shards were saved
-shard_path = '../../../data/commaai/training_files_filtered/tfrecords/'
-val_path = '../../../data/commaai/test_files/val_file_filtered/'
+shard_path = '../../data/commaai/training_files_filtered/tfrecords/'
+val_path = '../../data/commaai/test_files/val_file_filtered/'
 
 
 c = 55000
@@ -40,7 +40,7 @@ print('training with ' + str(len(shard_files)) + ' shards.')
 random.shuffle(shard_files)
 
 # read in val file(s)
-val_files = ['../../../data/commaai/test_files/val_file_filtered/val.tfrecords']
+val_files = ['../../data/commaai/test_files/val_file_filtered/val.tfrecords']
 
 # build keras model
 keras_model = build_model()

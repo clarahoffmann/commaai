@@ -15,14 +15,14 @@ import glob
 import os
 import tensorflow as tf
 import random
-from utils import imgs_input_fn, imgs_input_fn_val, rmse, build_model, _parse_function_train, _parse_function_val
+from utils import imgs_input_fn2, imgs_input_fn_val, rmse, build_model, _parse_function_train, _parse_function_val
 
 #define paths 
 # directory where checkpoints should be saved
-model_dir = '../../../data/models/20201021_unrestr_gaussian_resampled/'
+model_dir = '../../data/models/20201021_unrestr_gaussian_resampled/'
 # directory where shards were saved
-shard_path = '../../../data/commaai/training_files/unrestricted_gauss_dens_resampled/'
-val_path = '../../../data/commaai/test_files/'
+shard_path = '../../data/commaai/training_files/unfiltered_smaller_images/'
+val_path = '../../data/commaai/test_files/'
 
 c = 300000
 EPOCHS = 50
@@ -32,7 +32,7 @@ STEPS = c*EPOCHS
 shard_files = glob.glob(os.path.join(shard_path, "*.tfrecords")) 
 print('training with ' + str(len(shard_files)) + ' shards.')
 
-val_files = ['../../../data/commaai/test_files/_test.tfrecords']
+val_files = ['../../data/commaai/test_files/val.tfrecords']
 
 # shuffle shards
 random.shuffle(shard_files)
@@ -60,7 +60,7 @@ keras_estimator = tf.keras.estimator.model_to_estimator(
 
 
 # generators for training and validation data
-cust_train_input_fn = lambda: imgs_input_fn(shard_files)
+cust_train_input_fn = lambda: imgs_input_fn2(shard_files)
 cust_val_input_fn = lambda: imgs_input_fn_val(val_files)
 
 # specify training and evaluation spec

@@ -42,7 +42,7 @@ for layer in keras_model.layers:
 # since copulas are location free -> beta_0 = 0
 beta_coeff = beta[0]
 # save
-np.savetxt(str(extracted_coefficients_directory_beta +"beta.csv"), beta_coeff, delimiter=",")
+#np.savetxt(str(extracted_coefficients_directory_beta +"beta.csv"), beta_coeff, delimiter=",")
 
 ####### 2. Extract Basis Functions Bzeta #######
 
@@ -79,6 +79,6 @@ B_zetas = np.array(B_zetas)
 tr_labels = np.array(tr_labels)
 
 # save
-np.save(str(extracted_coefficients_directory_Bzeta + 'labels_val.csv'), labels)
-np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta_val.csv'), B_zetas)
-np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels_val.csv'), tr_labels)
+#np.save(str(extracted_coefficients_directory_Bzeta + 'labels_val.csv'), labels)
+#np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta_val.csv'), B_zetas)
+#np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels_val.csv'), tr_labels)

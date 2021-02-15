@@ -49,7 +49,7 @@ train_vid_files = [str(filepath + train_filenames[i] + '.hevc') for i in range(l
 train_yaw_files = [str(filepath + train_filenames[i] + '.value') for i in range(len(train_filenames))]
 train_time_files = [str(filepath + train_filenames[i] + '.t') for i in range(len(train_filenames))]
 
-for j in tqdm(range(917, 1001)): 
+for j in tqdm(range(1274, 1275)): 
     
     # get single video file
     video_file = train_vid_files[j]

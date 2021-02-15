@@ -84,6 +84,52 @@ def imgs_input_fn(filenames, perform_shuffle = True, repeat_count = EPOCHS, batc
     
     return batch_features, batch_labels
 
+def _parse_function_train2(proto):
+    '''
+    different version for cil shards
+    '''
+    # define tfrecord
+    keys_to_features = {'image': tf.io.FixedLenFeature([], tf.string),
+                        'tr_label': tf.io.FixedLenFeature([], tf.float32)
+                       }
+
+    # Load example
+    parsed_example = tf.io.parse_single_example(proto, keys_to_features)
+
+    # fourth channel does not contain anything
+    image_shape = tf.stack([66, 200, 3])
+    image_raw = parsed_example['image']
+
+    tr_label = tf.cast(parsed_example['tr_label'], tf.float32)
+    image = tf.io.decode_raw(image_raw, tf.uint8)
+    image = tf.cast(image, tf.float32)
+
+    image = tf.reshape(image, image_shape)/255 
+
+    return {'image':image}, tr_label
+    
+def imgs_input_fn2(filenames, perform_shuffle = True, repeat_count = EPOCHS, batch_size = 32): 
+    
+    '''
+    different version for cil shards
+    '''
+    # get data from filepath
+    dataset = tf.data.TFRecordDataset(filenames = filenames)
+    dataset = dataset.map(_parse_function_train2)
+    
+    # shuffle data if desired in batches of 256 examples
+    if perform_shuffle:
+        dataset = dataset.shuffle(buffer_size=256)
+    # repeat data this many times
+    dataset = dataset.repeat(repeat_count) 
+    # batch data
+    dataset = dataset.batch(batch_size)  
+    # create iterator
+    iterator = tf.compat.v1.data.make_one_shot_iterator(dataset)
+    batch_features, batch_labels = iterator.get_next()
+    
+    return batch_features, batch_labels
+
 
 def _parse_function_val(proto):
     '''
@@ -160,17 +206,7 @@ def imgs_input_fn_val(filenames, perform_shuffle = False, repeat_count = 1, batc
 
 
 def rmse(y_true, y_pred):
-    '''
-    Root mean squared error loss function
-    
-    Input:
-        - y_true: true y value
-        - y_pred: predicted y value
-    
-    Output:
-        - root mean squared error between y_true and y_pred
-    '''
-	return backend.sqrt(backend.mean(backend.square(y_pred - y_true), axis=-1))
+	return(backend.sqrt(backend.mean(backend.square(y_pred - y_true), axis=-1)))
 
 def build_model():
     '''

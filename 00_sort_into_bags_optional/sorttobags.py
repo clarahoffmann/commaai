@@ -50,7 +50,7 @@ train_yaw_files = [str(filepath + train_filenames[i] + '.value') for i in range(
 train_time_files = [str(filepath + train_filenames[i] + '.t') for i in range(len(train_filenames))]
 
 #1276 - 1500
-for j in tqdm(range(1419, 1500)): 
+for j in tqdm(range(980, 1001)): 
     
     # get single video file
     video_file = train_vid_files[j]
