@@ -79,9 +79,9 @@ class density_predictor():
             self.va_ridge_dir = '../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/'
             self.mu_t_va = np.load('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/mu_ts.npy')
             self.iterations = self.mu_t_va.shape[0]
-            self.beta = np.mean(self.mu_t_va[int(0.95*self.iterations):self.iterations,0:10], axis = 0)
-            self.beta_sd = np.std(self.mu_t_va[int(0.95*self.iterations):self.iterations,0:10], axis = 0)
-            self.tau_sq = np.mean(np.exp(self.mu_t_va[int(0.95*self.iterations):self.iterations,10]), axis = 0)
+            self.beta = np.mean(self.mu_t_va[int(0.9*self.iterations):self.iterations,0:10], axis = 0)
+            self.beta_sd = np.std(self.mu_t_va[int(0.9*self.iterations):self.iterations,0:10], axis = 0)
+            self.tau_sq = np.mean(np.exp(self.mu_t_va[int(0.9*self.iterations):self.iterations,10]), axis = 0)
             
             print('computing densities for each observation')
             self.densities_va = []

@@ -117,13 +117,13 @@ class DensityPredictor:
         
         print('loading model weights ...')
         if self.model == 'precise':
-            checkpoint_path = '../../../data/models/20201027_filtered_gaussian_resampled/'
+            checkpoint_path = '../../../data/models/20201027_filtered_gaussian_resampled/export/'
             B_zeta_model.load_weights(tf.train.latest_checkpoint(checkpoint_path)) # tf.train.latest_checkpoint(checkpoint_path)
             self.Bzetamodel = B_zeta_model
             print('... finished loading weights.')
             
         elif self.model == 'imprecise':
-            checkpoint_path = '../../../data/models/20201021_unrestr_gaussian_resampled/'
+            checkpoint_path = '../../../data/models/20201021_unrestr_gaussian_resampled/export/'
             B_zeta_model.load_weights(tf.train.latest_checkpoint(checkpoint_path)) # tf.train.latest_checkpoint(checkpoint_path)
             self.Bzetamodel = B_zeta_model
             print('... finished loading weights.')

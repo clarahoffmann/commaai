@@ -23,7 +23,7 @@ B_zeta_model = build_model_bzeta()
 B_zeta_model.load_weights(tf.train.latest_checkpoint(checkpoint_path))
 
 # all training images and paths
-path_all_imgs = '../../commaai_code/01_sort_into_bags/02_b_cil_shards/val_shards/df_paths.csv'
+path_all_imgs = '../../commaai_code/02_write_shards_optional/cil_shards/df_paths.csv'
 all_img_df = pd.read_csv(path_all_imgs)
 img_path_base = '../../data/commaai/test_files/val_files_unfiltered/'
 density_path= '../../data/commaai/density/gaussian_density.csv'

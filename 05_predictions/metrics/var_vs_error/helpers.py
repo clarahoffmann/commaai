@@ -25,7 +25,7 @@ def Fy(y, density):
     integral = density.loc[find_closest_element(y, density['axes']),'cdf']
     return(integral)  
 
-def error_vs_variance(result, grid):
+def error_vs_variance(result, grid, true_y):
     mse_list = []
     for i in grid:
         index = np.array(result['variance prediction'] < i)

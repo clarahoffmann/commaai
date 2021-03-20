@@ -37,7 +37,7 @@ def confidence_intervals(alphas, cdf_is, true_y, grid):
                 ub = min(grid[cdf >= 1-alpha/2])
             except: 
                 print('error at index:' + str(i))
-                ub = max(support)
+                ub = max(grid)
             i += 1
             confidence_intervals.append([lb, ub])
         all_conf_int.append(confidence_intervals)

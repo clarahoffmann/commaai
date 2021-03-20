@@ -16,11 +16,11 @@ import cv2
 from utils import find_closest_element, Fy, build_model_bzeta, build_model
 
 # path of model checkpoints
-checkpoint_path = '../../../data/models/20201027_filtered_gaussian_resampled/export/'
-shard_path = '../../../data/commaai/training_files_filtered/tfrecords/'
+checkpoint_path = '../../data/models/copula_cpl/export/'
+shard_path = '../../data/commaai/training_files_filtered/tfrecords/'
 shard_files = glob.glob(os.path.join(shard_path, "*.tfrecords")) 
-extracted_coefficients_directory_beta = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/beta/'
-extracted_coefficients_directory_Bzeta = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/Bzeta/'
+extracted_coefficients_directory_beta = '../../data/commaai/extracted_coefficients/copula_cpl/beta/'
+extracted_coefficients_directory_Bzeta = '../../data/commaai/extracted_coefficients/copula_cpl/Bzeta/'
 
 ####### 1. Build keras model and load weights #######
 
@@ -40,10 +40,10 @@ B_zeta_model.load_weights(tf.train.latest_checkpoint(checkpoint_path))
 
 # all training images and paths
 # switch train_indices to val indices to get validation Bzetas
-path_all_imgs = '../../../data/commaai/training_files_filtered/indices/train_indices.csv'
+path_all_imgs = '../../data/commaai/training_files_filtered/indices/train_indices.csv'
 all_img_df = pd.read_csv(path_all_imgs)
-img_path_base = '../../../data/commaai/train_bags_2/'
-density_path = '../../../data/commaai/density/gaussian_density_filtered.csv'
+img_path_base = '../../data/commaai/train_bags_2/'
+density_path = '../../data/commaai/density/gaussian_density_filtered.csv'
 density = pd.read_csv(density_path)
 
 # extract Bzetas by reading in images and predicting
@@ -51,13 +51,8 @@ labels = []
 tr_labels = []
 B_zetas = []
 for i in tqdm(range(0,all_img_df.shape[0])): 
-    img = imageio.imread(str(img_path_base + all_img_df.loc[i,'path']))/255
-    #img = cv2.resize(img, 
-                     #dsize = (291,218), 
-                     #interpolation = cv2.INTER_LINEAR)[76:142, 
-                     #                                  45:245,
-                     #                                  0:3].reshape(1,66,200,3)/255
-    B_zeta = B_zeta_model.predict(img)
+    img = imageio.imread(str(img_path_base + all_img_df.loc[i,'path']))[:,:,0:3]/255
+    B_zeta = B_zeta_model.predict(img.reshape(1,66,200,3))
     label = all_img_df.loc[i,'angle']
     tr_label = norm.ppf(Fy(label, density))
     labels.append(label)
@@ -70,6 +65,6 @@ B_zetas = np.array(B_zetas)
 tr_labels = np.array(tr_labels)
 
 # save
-#np.save(str(extracted_coefficients_directory_Bzeta + 'labels.csv'), labels)
-#np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta.csv'), B_zetas)
-#np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels.csv'), tr_labels)
+np.save(str(extracted_coefficients_directory_Bzeta + 'labels.csv'), labels)
+np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta.csv'), B_zetas)
+np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels.csv'), tr_labels)

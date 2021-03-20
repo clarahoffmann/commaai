@@ -73,7 +73,7 @@ def Leapfrog(theta, r, epsilon, n, z, p, B, tBB, betaBt, beta, W, theta_prior):
     # update theta
     theta_tilde = (theta + epsilon*r_tilde).reshape(p + 1,)
     beta_t = theta_tilde[0:p]
-    betaBt_t = beta_t.dot(B_zeta.T)
+    betaBt_t = beta_t.dot(B.T)
     
     # compute updated gradient
     Delta_theta_tilde = Delta_theta(theta_tilde, B, n, z, p, tBB, betaBt_t, theta, W, theta_prior)
