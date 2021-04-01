@@ -13,10 +13,10 @@ import imageio
 from utils import find_closest_element, Fy, build_model_bzeta
 
 # path of model checkpoints
-checkpoint_path = '../../data/models/20201021_unrestr_gaussian_resampled/export/'
+checkpoint_path = '../../data/models/copula_cil/export/'
 shard_path = '../../data/commaai/training_files/unrestricted_gauss_dens_resampled'
-extracted_coefficients_directory_beta = '../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/beta/'
-extracted_coefficients_directory_Bzeta = '../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/Bzeta/'
+extracted_coefficients_directory_beta = '../../data/commaai/extracted_coefficients/copula_cil/beta/'
+extracted_coefficients_directory_Bzeta = '../../data/commaai/extracted_coefficients/copula_cil/Bzeta/'
 
 # build model and # load weights
 B_zeta_model = build_model_bzeta()
@@ -44,9 +44,9 @@ for i in tqdm(range(0,all_img_df.shape[0])):
     B_zetas.append(B_zeta)
     
 labels = np.array(labels)
-B_zetas = np.array(B_zetas).reshape(95838, 10)
+B_zetas = np.array(B_zetas).reshape(94570, 10)
 tr_labels = np.array(tr_labels)
 
-#np.save(str(extracted_coefficients_directory_Bzeta + 'labels_val.npy'), labels)
-#np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta_val.npy'), B_zetas)
-#np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels_val.npy'), tr_labels)
+np.save(str(extracted_coefficients_directory_Bzeta + 'labels_val.npy'), labels)
+np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta_val.npy'), B_zetas)
+np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels_val.npy'), tr_labels)

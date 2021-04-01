@@ -1,5 +1,4 @@
-from helpers import (Fy, find_closest_element,  compute_coverage, #predict_single_density,
-confidence_interval, confidence_interval, generate_fixed_terms, get_ci)
+from helpers import (Fy, find_closest_element)
 import numpy as np
 from scipy.stats import norm
 from tqdm import tqdm
@@ -16,7 +15,7 @@ class density_predictor():
         self.p = self.B_zeta.shape[1]
         
         # compute fixed terms and grid
-        self.p_y_y0,  self.part_1, self.phi_1_z, self.grid = generate_fixed_terms(self.no_points, self.density)
+        self.p_y_y0,  self.part_1, self.phi_1_z, self.grid = self.generate_fixed_terms()
         
     def generate_fixed_terms(self):
     
@@ -24,7 +23,7 @@ class density_predictor():
         self.density_y = self.density['axes']
         self.density_pdf = self.density['pdf']
         # compute these beforehand to save computation time
-        self.p_y_y0 = [self.density_pdf[find_closest_element(y_i,density_y)] for y_i in self.grid]
+        self.p_y_y0 = [self.density_pdf[find_closest_element(y_i,self.density_y)] for y_i in self.grid]
         self.part_1 = np.array([norm.ppf(Fy(y_i, self.density)) for y_i in self.grid])
         self.phi_1_z = np.array([norm(0, 1).pdf(y_i) for y_i in self.part_1 ])
         
@@ -77,7 +76,7 @@ class density_predictor():
         if self.method == 'va_ridge':
             
             self.va_ridge_dir = '../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/'
-            self.mu_t_va = np.load(self.va_ridge_dir + 'mu_ts23_factor_4_50.npy')
+            self.mu_t_va = np.load('../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/mu_ts_new.npy')
             self.iterations = self.mu_t_va.shape[0]
             self.beta = np.mean(self.mu_t_va[int(0.9*self.iterations):self.iterations,0:10], axis = 0)
             self.beta_sd = np.std(self.mu_t_va[int(0.9*self.iterations):self.iterations,0:10], axis = 0)
@@ -116,10 +115,11 @@ class density_predictor():
         if self.method == 'va_horseshoe':
         
             self.va_horse_dir = '../../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/'
-            self.mu_t_va = np.load(self.va_horse_dir + 'mu_ts2_new_dev.npy').reshape(-1, 21)
-            self.beta = np.mean(self.mu_t_va[10000:,0:10], axis = 0)
-            self.Lambda = np.mean(np.exp(0.5*self.mu_t_va[10000:,10:20]), axis = 0)
-            self.tau_sq = np.exp(np.mean(self.mu_t_va[10000:,20], axis = 0))
+            self.mu_t_va = np.load(self.va_horse_dir + 'mu_ts_new.npy').reshape(-1, 21)
+            self.iter = self.mu_t_va.shape[0]
+            self.beta = np.mean(self.mu_t_va[int(0.9*self.iter):,0:10], axis = 0)
+            self.Lambda = np.mean(np.exp(0.5*self.mu_t_va[int(0.9*self.iter):,10:20]), axis = 0)
+            self.tau_sq = np.exp(np.mean(self.mu_t_va[int(0.9*self.iter):,20], axis = 0))
             self.z_pred = self.B_zeta.reshape(self.B_zeta.shape[0], self.p).dot(self.beta)
             self.pred_y = [self.density.loc[find_closest_element(norm.cdf(z), self.density['cdf']), 'axes'] for z in self.z_pred]
             
@@ -148,7 +148,7 @@ class density_predictor():
         if self.method == 'hmc_ridge':
             
             self.hmc_ridge_dir = '../../../../data/commaai/mcmc/filtered_gaussian_resampled/Ridge/'
-            self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas_L100_3000.npy')[1000:,:]
+            self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas_new.npy')[500:,:]
             self.beta = np.mean(self.mu_t_hmc[:,0:10], axis = 0)
             self.tau_sq = np.exp(self.mu_t_hmc[:,10])
             self.z_pred = self.B_zeta.reshape(self.B_zeta.shape[0], self.p).dot(self.beta)
@@ -177,10 +177,10 @@ class density_predictor():
 
         if self.method == 'hmc_horseshoe':
             self.hmc_ridge_dir = '../../../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/'
-            self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas_try.npy').reshape(-1, 21)
-            self.beta = np.mean(self.mu_t_hmc[4000:,0:10], axis = 0)
-            self.Lambda = np.exp(0.5*self.mu_t_hmc[4000:,10:20])
-            self.tau_sq = np.exp(self.mu_t_hmc[4000:,20])
+            self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas.npy').reshape(-1, 21)
+            self.beta = np.mean(self.mu_t_hmc[2000:,0:10], axis = 0)
+            self.Lambda = np.exp(0.5*self.mu_t_hmc[2000:,10:20])
+            self.tau_sq = np.exp(self.mu_t_hmc[2000:,20])
             self.z_pred = self.B_zeta.reshape(self.B_zeta.shape[0], self.p).dot(self.beta)
             self.pred_y = [self.density.loc[find_closest_element(norm.cdf(z), self.density['cdf']), 'axes'] for z in self.z_pred]
             

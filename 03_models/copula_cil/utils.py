@@ -46,7 +46,7 @@ def _parse_function_train(proto):
 
     image = tf.reshape(image, image_shape)[:,:,0:3]/255 
 
-    return {'image':image}, tr_label
+    return {'image':image}, label
     
 def imgs_input_fn(filenames, perform_shuffle = True, repeat_count = EPOCHS, batch_size = 32): 
     
@@ -271,13 +271,13 @@ def build_model_bzeta():
     #x = BatchNormalization()(x)
     x = Flatten()(x)
     x = Dropout(0.5)(x)
-    x = Dense(1164)(x)
+    x = Dense(1164)(x, activation='relu')
     x = Dropout(0.5)(x)
-    x = Dense(100)(x)
+    x = Dense(100)(x, activation='relu')
     x = Dropout(0.5)(x)
-    x = Dense(50)(x) 
+    x = Dense(50)(x, activation='relu') 
     x = Dropout(0.2)(x)
-    x = Dense(10)(x)
+    x = Dense(10)(x, activation='relu')
 
     B_zeta_model = tf.keras.models.Model(
           inputs = [Input], outputs = [x])

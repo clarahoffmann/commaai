@@ -12,8 +12,8 @@ import statsmodels.api as sm
 from compute_dens import comp_dens
 
 # read in val data
-B_zeta = np.load('../../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/Bzeta/B_zeta_val.npy')
-true_y = np.load('../../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/Bzeta/labels_val.npy')
+B_zeta = np.load('../../../../data/commaai/extracted_coefficients/copula_cpl/Bzeta/B_zeta_val.npy')
+true_y = np.load('../../../../data/commaai/extracted_coefficients/copula_cpl/Bzeta/labels_val.npy')
 B_zeta = B_zeta[np.abs(true_y) < 50,:] 
 true_y = true_y[np.abs(true_y) < 50]
 

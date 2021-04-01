@@ -16,11 +16,11 @@ import cv2
 from utils import find_closest_element, Fy, build_model_bzeta, build_model
 
 # path of model checkpoints
-checkpoint_path = '../../data/models/20201021_unrestr_gaussian_resampled/export/'
+checkpoint_path = '../../data/models/copula_cil/export/'
 shard_path = '../../data/commaai/training_files/unrestricted_gauss_dens_resampled'
 shard_files = glob.glob(os.path.join(shard_path, "*.tfrecords")) 
-extracted_coefficients_directory_beta = '../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/beta/'
-extracted_coefficients_directory_Bzeta = '../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/Bzeta/'
+extracted_coefficients_directory_beta = '../../data/commaai/extracted_coefficients/copula_cil/beta/'
+extracted_coefficients_directory_Bzeta = '../../data/commaai/extracted_coefficients/copula_cil/Bzeta/'
 
 
 ####### 1. Build keras model and load weights #######
@@ -43,8 +43,8 @@ for layer in keras_model.layers:
 # since copulas are location free -> beta_0 = 0
 beta_coeff = beta[0]
 # save
-#np.savetxt(str(extracted_coefficients_directory_beta +"beta.csv"), 
-           #beta_coeff, delimiter=",")
+np.savetxt(str(extracted_coefficients_directory_beta +"beta.csv"), 
+           beta_coeff, delimiter=",")
 
 ####### 2. Extract Basis Functions Bzeta #######
 
@@ -83,6 +83,6 @@ B_zetas = np.array(B_zetas)
 tr_labels = np.array(tr_labels)
 
 # save
-#np.save(str(extracted_coefficients_directory_Bzeta + 'labels.csv'), labels)
-#np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta.csv'), B_zetas)
-#np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels.csv'), tr_labels)
+np.save(str(extracted_coefficients_directory_Bzeta + 'labels.csv'), labels)
+np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta.csv'), B_zetas)
+np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels.csv'), tr_labels)

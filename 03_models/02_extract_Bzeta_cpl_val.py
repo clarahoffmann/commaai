@@ -79,6 +79,6 @@ B_zetas = np.array(B_zetas)
 tr_labels = np.array(tr_labels)
 
 # save
-np.save(str(extracted_coefficients_directory_Bzeta + 'labels_val.csv'), labels)
-np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta_val.csv'), B_zetas)
-np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels_val.csv'), tr_labels)
+np.save(str(extracted_coefficients_directory_Bzeta + 'labels_val.npy'), labels)
+np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta_val.npy'), B_zetas)
+np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels_val.npy'), tr_labels)

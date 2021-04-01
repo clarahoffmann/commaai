@@ -16,9 +16,14 @@
 
 from saliency import SaliencyMask
 import numpy as np
-import tensorflow as tf
-import keras.backend as K
+#import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+#import keras.backend as K
+from tensorflow.compat.v1.keras import backend as K
 from keras.models import load_model
+#import tensorflow.compat.v1 as tf
+#tf.disable_v2_behavior()
 
 class GuidedBackprop(SaliencyMask):
     """A SaliencyMask class that computes saliency masks with GuidedBackProp.
@@ -50,7 +55,7 @@ class GuidedBackprop(SaliencyMask):
         """   
         model.save('/tmp/gb_keras.h5') 
         with tf.Graph().as_default(): 
-            with tf.Session().as_default(): 
+            with tf.compat.v1.Session().as_default(): 
                 K.set_learning_phase(0)
                 load_model('/tmp/gb_keras.h5', custom_objects={"custom_loss":custom_loss})
                 session = K.get_session()
@@ -61,7 +66,7 @@ class GuidedBackprop(SaliencyMask):
 
         self.guided_graph = tf.Graph()
         with self.guided_graph.as_default():
-            self.guided_sess = tf.Session(graph = self.guided_graph)
+            self.guided_sess = tf.compat.v1.Session(graph = self.guided_graph)
 
             with self.guided_graph.gradient_override_map({'Relu': 'GuidedRelu'}):
                 saver = tf.train.import_meta_graph('/tmp/guided_backprop_ckpt.meta')
