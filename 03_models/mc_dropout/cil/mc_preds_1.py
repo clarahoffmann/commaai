@@ -114,20 +114,13 @@ all_img_df = all_img_df[np.abs(all_img_df['true_y']) < 40].reset_index()
 
 mc_samples = 1000
 labels = []
-tr_labels = []
 preds = []
 y_preds = []
-for i in tqdm(range(0, int(all_img_df.shape[0]/2))): 
+for i in tqdm(range(0, int(all_img_df.shape[0]/4))): 
     img = (imageio.imread(str(img_path_base + all_img_df.loc[i,'path']))/255)[:,:,0:3].reshape(1, 66, 200, 3)
     x_pred = np.repeat(img, mc_samples, axis = 0)
-    pred = model.predict(x_pred.reshape(-1,66,200,3))
-    label = all_img_df.loc[i,'true_y']
-    tr_label = norm.ppf(Fy(label, density))
-    labels.append(label)
-    tr_labels.append(tr_label)          
+    pred = model.predict(x_pred.reshape(-1,66,200,3))    
     preds.append(pred)
 preds = np.array(preds)
 
-np.save('../../../../data/commaai/predictions/mc_preds_cil_1.npy', preds)
-np.save('../../../../data/commaai/predictions/cil_labels_1.npy', np.array(labels))
-np.save('../../../../data/commaai/predictions/cil_tr_labels_1.npy', np.array(tr_labels))
+np.save('../../../../data/commaai/predictions/mc_preds_cil_1_neu.npy', preds)

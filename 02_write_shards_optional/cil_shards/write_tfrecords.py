@@ -6,18 +6,16 @@
 
 # load packages
 import pandas as pd
-import matplotlib.pyplot as plt
 from helpers import wrap_int64, wrap_bytes, wrap_float, Fy
 from tqdm import tqdm
 from scipy.stats import norm
 import numpy as np
 import tensorflow as tf
 import imageio
-#import cv2
 import random
 
 print('reading files')
-destination = '../../../data/commaai/training_files/unrestricted_gauss_dens_resampled/'
+destination = '../../../data/commaai/training_files/unfiltered_2/'
 bag_path = '../../../data/commaai/train_bags_2/'
 
 # read training indices
@@ -106,9 +104,6 @@ for m in tqdm(range(0,int(30000/12))):
                                 {
                                     'image': wrap_bytes(img_bytes),
                                     'label': wrap_float(label),
-                                    'rows': wrap_int64(rows),
-                                    'cols': wrap_int64(cols),
-                                    'depth': wrap_int64(depth),
                                     'tr_label': wrap_float(tr_label)
 
                                 }
@@ -150,9 +145,6 @@ for m in tqdm(range(0,int(30000/12))):
                                     {
                                         'image': wrap_bytes(img_bytes),
                                         'label': wrap_float(label),
-                                        'rows': wrap_int64(rows),
-                                        'cols': wrap_int64(cols),
-                                        'depth': wrap_int64(depth),
                                         'tr_label': wrap_float(tr_label)
 
                                     }

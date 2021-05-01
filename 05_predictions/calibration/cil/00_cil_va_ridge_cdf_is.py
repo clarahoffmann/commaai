@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 from tqdm import tqdm
+from functools import partial
+tqdm = partial(tqdm, position=0, leave=True)
 from scipy.integrate import simps
 import matplotlib.pyplot as plt
 import imageio
@@ -12,10 +14,10 @@ import statsmodels.api as sm
 from compute_dens import comp_dens
 
 # read in val data
-B_zeta = np.load('../../../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/Bzeta/B_zeta_val.npy')
-true_y = np.load('../../../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/Bzeta/labels_val.npy')
-B_zeta = B_zeta[np.abs(true_y) < 50,:] 
-true_y = true_y[np.abs(true_y) < 50]
+B_zeta = np.load('../../../../data/commaai/extracted_coefficients/copula_cil/Bzeta/B_zeta_val.npy')
+true_y = np.load('../../../../data/commaai/extracted_coefficients/copula_cil/Bzeta/labels_val.npy')
+B_zeta = B_zeta[np.abs(true_y) < 40,:] 
+true_y = true_y[np.abs(true_y) < 40]
 
 density_path = '../../../../data/commaai/density/gaussian_density.csv'
 density = pd.read_csv(density_path)

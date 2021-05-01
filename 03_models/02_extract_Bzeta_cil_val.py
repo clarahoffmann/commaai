@@ -14,7 +14,6 @@ from utils import find_closest_element, Fy, build_model_bzeta
 
 # path of model checkpoints
 checkpoint_path = '../../data/models/copula_cil/export/'
-shard_path = '../../data/commaai/training_files/unrestricted_gauss_dens_resampled'
 extracted_coefficients_directory_beta = '../../data/commaai/extracted_coefficients/copula_cil/beta/'
 extracted_coefficients_directory_Bzeta = '../../data/commaai/extracted_coefficients/copula_cil/Bzeta/'
 

@@ -32,7 +32,7 @@ p = B_zeta.shape[1]
 # Lambda is a diagonal matrix of dimension p
 Lambda = np.random.rand(p,)
 
-seed(679305)
+seed(7898574)
 tau_start = 0.01
 
 # Set iteration counter to 0
@@ -117,6 +117,14 @@ for a in tqdm(range(iterations)):
     mu_ts.append(mu_t)
     d_ts.append(d_t)
     B_ts.append(B_t)
+    
+    if a % 1000 == 0:
+        np.save('../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/mu_ts_new.npy', mu_ts)
+        np.save('../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/d_ts_new.npy', d_ts)
+        np.save('../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/B_ts_new.npy', B_ts)
+        np.save('../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/vartheta_new.npy', all_varthetas)
+        np.save('../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/lower_bounds_new.npy', lower_bounds)
+        
 
 np.save('../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/mu_ts_new.npy', mu_ts)
 np.save('../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/d_ts_new.npy', d_ts)

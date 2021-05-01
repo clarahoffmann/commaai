@@ -21,7 +21,7 @@ from utils import imgs_input_fn2, imgs_input_fn_val, rmse, build_model, _parse_f
 # directory where checkpoints should be saved
 model_dir = '../../../data/models/copula_cil/'
 # directory where shards were saved
-shard_path = '../../../data/commaai/training_files/unfiltered_smaller_images/'
+shard_path = '../../../data/commaai/training_files/unfiltered_smaller_images_y/'
 val_path = '../../../data/commaai/test_files/'
 
 c = 300000

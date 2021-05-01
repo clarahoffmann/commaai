@@ -6,6 +6,7 @@ from scipy.integrate import trapz
 
 class density_predictor():
     
+    
     def __init__(self, B_zeta, true_y, density, no_points):
         # initialize
         self.B_zeta = B_zeta
@@ -78,10 +79,10 @@ class density_predictor():
             self.va_ridge_dir = '../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/'
             self.mu_t_va = np.load('../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/mu_ts_new.npy')
             self.iterations = self.mu_t_va.shape[0]
-            self.beta = np.mean(self.mu_t_va[int(0.9*self.iterations):self.iterations,0:10], axis = 0)
-            self.beta_sd = np.std(self.mu_t_va[int(0.9*self.iterations):self.iterations,0:10], axis = 0)
-            self.tau_sq = np.mean(np.exp(self.mu_t_va[int(0.9*self.iterations):self.iterations,10]), axis = 0)
-            self.tau_sq_sd = np.std(np.exp(self.mu_t_va[int(0.9*self.iterations):self.iterations,10]), axis = 0)
+            self.beta = np.mean(self.mu_t_va[int(0.95*self.iterations):self.iterations,0:10], axis = 0)
+            self.beta_sd = np.std(self.mu_t_va[int(0.95*self.iterations):self.iterations,0:10], axis = 0)
+            self.tau_sq = np.mean(np.exp(self.mu_t_va[int(0.95*self.iterations):self.iterations,10]), axis = 0)
+            self.tau_sq_sd = np.std(np.exp(self.mu_t_va[int(0.95*self.iterations):self.iterations,10]), axis = 0)
             
             print('computing densities for each observation')
             self.densities_va = []

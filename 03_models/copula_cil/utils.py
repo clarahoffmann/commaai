@@ -90,6 +90,7 @@ def _parse_function_train2(proto):
     '''
     # define tfrecord
     keys_to_features = {'image': tf.io.FixedLenFeature([], tf.string),
+                        'label': tf.io.FixedLenFeature([], tf.float32),
                         'tr_label': tf.io.FixedLenFeature([], tf.float32)
                        }
 
@@ -97,14 +98,14 @@ def _parse_function_train2(proto):
     parsed_example = tf.io.parse_single_example(proto, keys_to_features)
 
     # fourth channel does not contain anything
-    image_shape = tf.stack([66, 200, 3])
+    image_shape = tf.stack([66, 200, 4])
     image_raw = parsed_example['image']
 
     tr_label = tf.cast(parsed_example['tr_label'], tf.float32)
     image = tf.io.decode_raw(image_raw, tf.uint8)
     image = tf.cast(image, tf.float32)
 
-    image = tf.reshape(image, image_shape)/255 
+    image = tf.reshape(image, image_shape)[:,:,0:3]/255 
 
     return {'image':image}, tr_label
     

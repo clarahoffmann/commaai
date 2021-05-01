@@ -21,7 +21,8 @@ from utils import imgs_input_fn2, imgs_input_fn_val, rmse, build_model, _parse_f
 # directory where checkpoints should be saved
 model_dir = '../../../../data/models/mc_dropout_cil/'
 # directory where shards were saved
-shard_path = '../../../../data/commaai/training_files/unfiltered_smaller_images/'
+#shard_path = '../../../../data/commaai/training_files/unfiltered_2/'
+shard_path = '../../../../data/commaai/training_files/unfiltered_smaller_images_y/'
 val_path = '../../../../data/commaai/test_files/'
 
 c = 300000
@@ -55,7 +56,7 @@ keras_estimator = tf.keras.estimator.model_to_estimator(
       config = tf.estimator.RunConfig(
           log_step_count_steps=10, 
           save_summary_steps = 10,
-          save_checkpoints_steps = 1000,
+          save_checkpoints_steps = 2000,
           keep_checkpoint_max=2000))
 
 

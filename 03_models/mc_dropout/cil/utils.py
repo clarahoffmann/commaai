@@ -91,7 +91,8 @@ def _parse_function_train2(proto):
     '''
     # define tfrecord
     keys_to_features = {'image': tf.io.FixedLenFeature([], tf.string),
-                        'tr_label': tf.io.FixedLenFeature([], tf.float32)
+                        'tr_label': tf.io.FixedLenFeature([], tf.float32),
+                        'label': tf.io.FixedLenFeature([], tf.float32),
                        }
 
     # Load example
@@ -101,13 +102,14 @@ def _parse_function_train2(proto):
     image_shape = tf.stack([66, 200, 3])
     image_raw = parsed_example['image']
 
-    tr_label = tf.cast(parsed_example['tr_label'], tf.float32)
+    #tr_label = tf.cast(parsed_example['tr_label'], tf.float32)
+    label = tf.cast(parsed_example['label'], tf.float32)
     image = tf.io.decode_raw(image_raw, tf.uint8)
     image = tf.cast(image, tf.float32)
 
     image = tf.reshape(image, image_shape)/255 
 
-    return {'image':image}, tr_label
+    return {'image':image}, label
     
 def imgs_input_fn2(filenames, perform_shuffle = True, repeat_count = EPOCHS, batch_size = 32): 
     
@@ -168,7 +170,7 @@ def _parse_function_val(proto):
     # scale image pixels to [0,1]
     image = tf.reshape(image, image_shape)/255 
 
-    return {'image':image}, tr_label
+    return {'image':image}, label
 
 def imgs_input_fn_val(filenames, perform_shuffle = False, repeat_count = 1, batch_size = 100): 
     '''

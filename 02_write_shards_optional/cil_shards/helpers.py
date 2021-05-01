@@ -61,7 +61,7 @@ def Fy(y, density):
     return(integral)   
             
 def read_vid_angles(vid_path, value_path, t_path, density):
-        '''
+    '''
     Read frames from comma.ai 2k19 video files and
     merge with associated angles
     
@@ -79,7 +79,7 @@ def read_vid_angles(vid_path, value_path, t_path, density):
     '''
     
     # read video
-    vid = imageio.get_reader(vid_path,  'ffmpeg')
+    vid = imageio.get_reader(vid_path, 'ffmpeg')
     frames = np.array([im for im in vid.iter_data()], dtype=np.uint8)
     vid.close()
     

@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from scipy.stats import multivariate_normal
 import ray
+#ray.init()
+#import ray
 ray.init()
 
 extracted_coefficients_path = '../../data/commaai/extracted_coefficients/copula_cil/'

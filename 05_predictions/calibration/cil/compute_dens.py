@@ -27,11 +27,11 @@ class comp_dens():
         # choose method and read in parameters
         if self.method == 'va_horseshoe':
             self.va_horse_dir = '../../../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/'
-            self.mu_t_va = np.load(self.va_horse_dir + 'mu_ts2_new_dev_1.npy')
+            self.mu_t_va = np.load(self.va_horse_dir + 'mu_ts_new.npy')
             self.iteration = self.mu_t_va.shape[0]
             self.p = 10
-            self.B_ts = np.mean(np.load(self.va_horse_dir + 'B_ts2_new_dev_1.npy')[int(0.9*self.iteration):,:,:], axis = 0)
-            self.d_ts = np.mean(np.load(self.va_horse_dir + 'd_ts2_new_dev_1.npy')[int(0.9*self.iteration):,:,:], axis = 0)
+            self.B_ts = np.mean(np.load(self.va_horse_dir + 'B_ts_new.npy')[int(0.9*self.iteration):,:,:], axis = 0)
+            self.d_ts = np.mean(np.load(self.va_horse_dir + 'd_ts_new.npy')[int(0.9*self.iteration):,:,:], axis = 0)
             self.var = np.sqrt(np.diag(self.B_ts.dot(self.B_ts.T) + self.d_ts**2))
             self.beta_va = np.mean(self.mu_t_va[int(0.9*self.iteration):,0:10], axis = 0)
             self.Lambdas_log = np.mean(self.mu_t_va[int(0.9*self.iteration):,10:20], axis = 0)
@@ -55,7 +55,7 @@ class comp_dens():
         if self.method == 'va_ridge':
             
             self.va_ridge_dir = '../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/'
-            self.mu_t_va = np.load(self.va_ridge_dir + 'mu_ts23_factor_50.npy')
+            self.mu_t_va = np.load(self.va_ridge_dir + 'mu_ts_new.npy')
             self.iteration = self.mu_t_va.shape[0]
             self.beta = np.mean(self.mu_t_va[int(0.9*self.iteration):self.iteration,0:10], axis = 0)
             self.tau = np.exp(np.mean(self.mu_t_va[int(0.9*self.iteration):self.iteration,10], axis = 0))
@@ -64,7 +64,7 @@ class comp_dens():
             
         if self.method == 'hmc_ridge':
             self.hmc_ridge_dir = '../../../../data/commaai/mcmc/unfiltered_gaussian_resampled/Ridge/'
-            self.hmc_thetas = np.load(str(self.hmc_ridge_dir + 'all_thetas_L100_5000.npy'))[1000:, :]
+            self.hmc_thetas = np.load(str(self.hmc_ridge_dir + 'all_thetas_new.npy'))[1000:, :]
             self.beta = np.mean(self.hmc_thetas[:,0:10], axis = 0)
             self.tau = np.exp(self.hmc_thetas[:,10])
             self.p = 10

@@ -17,8 +17,6 @@ from utils import find_closest_element, Fy, build_model_bzeta, build_model
 
 # path of model checkpoints
 checkpoint_path = '../../data/models/copula_cil/export/'
-shard_path = '../../data/commaai/training_files/unrestricted_gauss_dens_resampled'
-shard_files = glob.glob(os.path.join(shard_path, "*.tfrecords")) 
 extracted_coefficients_directory_beta = '../../data/commaai/extracted_coefficients/copula_cil/beta/'
 extracted_coefficients_directory_Bzeta = '../../data/commaai/extracted_coefficients/copula_cil/Bzeta/'
 
@@ -29,6 +27,7 @@ extracted_coefficients_directory_Bzeta = '../../data/commaai/extracted_coefficie
 keras_model = build_model()
 
 # load weights
+print('loading checkpoint ' + str(tf.train.latest_checkpoint(checkpoint_path)))
 keras_model.load_weights(tf.train.latest_checkpoint(checkpoint_path))
 
 # get coefficients of last layer
@@ -60,6 +59,7 @@ img_path_base = '../../data/commaai/train_bags_2/'
 density_path = '../../data/commaai/density/gaussian_density.csv'
 density = pd.read_csv(density_path)
 
+
 # extract Bzetas by reading in images and predicting
 labels = []
 tr_labels = []
@@ -83,6 +83,6 @@ B_zetas = np.array(B_zetas)
 tr_labels = np.array(tr_labels)
 
 # save
-np.save(str(extracted_coefficients_directory_Bzeta + 'labels.csv'), labels)
-np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta.csv'), B_zetas)
-np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels.csv'), tr_labels)
+np.save(str(extracted_coefficients_directory_Bzeta + 'labels.npy'), labels)
+np.save(str(extracted_coefficients_directory_Bzeta + 'B_zeta.npy'), B_zetas)
+np.save(str(extracted_coefficients_directory_Bzeta + 'tr_labels.npy'), tr_labels)
