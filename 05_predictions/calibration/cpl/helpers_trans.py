@@ -82,12 +82,13 @@ class DensityPredictor:
         self.p = p
         
         if self.model == 'precise':
-            self.extracted_coefficients_path_beta = '../../../data/commaai/extracted_coefficients/copula_cpl/beta/'
-        
-        #if self.model == 'imprecise':
-         #   self.extracted_coefficients_path_beta = '../../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/beta/'
-        #    self.extracted_coefficients_path_beta_hmc = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/beta/'
-      #      self.extracted_coefficients_path_beta_va = #'../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/beta/'
+            self.extracted_coefficients_path_beta_dnn = '../../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/beta/'
+            self.extracted_coefficients_path_beta_hmc = '../../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/beta/'
+            self.extracted_coefficients_path_beta_va = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/beta/'
+        if self.model == 'imprecise':
+            self.extracted_coefficients_path_beta = '../../../data/commaai/extracted_coefficients/20201021_unrestr_gaussian_resampled/beta/'
+            self.extracted_coefficients_path_beta_hmc = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/beta/'
+            self.extracted_coefficients_path_beta_va = '../../../data/commaai/extracted_coefficients/20201027_filtered_gaussian_resampled/beta/'
     
     def load_bzeta_model(self):
         
@@ -102,29 +103,30 @@ class DensityPredictor:
         x = Conv2D(64, kernel_size=(3, 3), activation='relu')(x)
         x = BatchNormalization()(x)
         x = Conv2D(64, kernel_size=(3, 3), activation='relu')(x)
+        #x = BatchNormalization()(x)
         x = Flatten()(x)
         x = Dropout(0.5)(x)
-        x = Dense(1164, activation='relu')(x)
+        x = Dense(1164)(x)
         x = Dropout(0.5)(x)
-        x = Dense(100, activation='relu')(x)
+        x = Dense(100)(x)
         x = Dropout(0.5)(x)
-        x = Dense(50, activation='relu')(x) 
+        x = Dense(50)(x) 
         x = Dropout(0.2)(x)
-        Output = Dense(10, activation='relu')(x)
-        
+        x = Dense(10)(x)
+
         B_zeta_model = tf.keras.models.Model(
-              inputs = [Input], outputs = [Output])
+              inputs = [Input], outputs = [x])
         # keras model for basis functions B_zeta
         
         print('loading model weights ...')
         if self.model == 'precise':
-            checkpoint_path = '../../../data/models/copula_cpl/export/'
+            checkpoint_path = '../../../../data/models/20201027_filtered_gaussian_resampled/export/'
             B_zeta_model.load_weights(tf.train.latest_checkpoint(checkpoint_path)) # tf.train.latest_checkpoint(checkpoint_path)
             self.Bzetamodel = B_zeta_model
             print('... finished loading weights.')
             
         elif self.model == 'imprecise':
-            checkpoint_path = '../../../data/models/copula_cil/export/'
+            checkpoint_path = '../../../data/models/20201021_unrestr_gaussian_resampled/export/'
             B_zeta_model.load_weights(tf.train.latest_checkpoint(checkpoint_path)) # tf.train.latest_checkpoint(checkpoint_path)
             self.Bzetamodel = B_zeta_model
             print('... finished loading weights.')
@@ -134,7 +136,6 @@ class DensityPredictor:
     def load_z_model(self):
         
         # define model and load weights from training
-        # build model
         Input = tf.keras.layers.Input(shape=(66, 200, 3,), name='image')
         x = Conv2D(24, kernel_size=(5, 5), activation='relu', strides=(2, 2))(Input)
         x = BatchNormalization()(x)
@@ -145,15 +146,16 @@ class DensityPredictor:
         x = Conv2D(64, kernel_size=(3, 3), activation='relu')(x)
         x = BatchNormalization()(x)
         x = Conv2D(64, kernel_size=(3, 3), activation='relu')(x)
+        #x = BatchNormalization()(x)
         x = Flatten()(x)
         x = Dropout(0.5)(x)
-        x = Dense(1164, activation='relu')(x)
+        x = Dense(1164)(x)
         x = Dropout(0.5)(x)
-        x = Dense(100, activation='relu')(x)
+        x = Dense(100)(x)
         x = Dropout(0.5)(x)
-        x = Dense(50, activation='relu')(x) 
+        x = Dense(50)(x) 
         x = Dropout(0.2)(x)
-        x = Dense(10, activation='relu')(x)
+        x = Dense(10)(x)
         Output = Dense(1, name = 'output_layer')(x)
 
         z_model = tf.keras.models.Model(
@@ -161,18 +163,18 @@ class DensityPredictor:
         
         print('loading model weights ...')
         if self.model == 'precise':
-            checkpoint_path = '../../../data/models/copula_cpl/'
+            checkpoint_path = '../../../../data/models/20201027_filtered_gaussian_resampled/'
             z_model.load_weights(tf.train.latest_checkpoint(checkpoint_path)) # tf.train.latest_checkpoint(checkpoint_path)
             self.z_model = z_model
             print('... finished loading weights.')
             
-        #elif self.model == 'imprecise':
-        #    checkpoint_path = '../../../data/models/20201021_unrestr_gaussian_resampled/'
-        #    z_model.load_weights(tf.train.latest_checkpoint(checkpoint_path)) # tf.train.latest_checkpoint(checkpoint_path)
-        #    self.z_model = z_model
-        #    print('... finished loading weights.')
-        #else:
-        #    return('unknown model type')
+        elif self.model == 'imprecise':
+            checkpoint_path = '../../../data/models/20201021_unrestr_gaussian_resampled/'
+            z_model.load_weights(tf.train.latest_checkpoint(checkpoint_path)) # tf.train.latest_checkpoint(checkpoint_path)
+            self.z_model = z_model
+            print('... finished loading weights.')
+        else:
+            return('unknown model type')
     
     def predict_z(self, image_path_list):
         
@@ -181,11 +183,12 @@ class DensityPredictor:
         images = []
         
         for img_path in image_path_list:
+            
             # load image
             img = imageio.imread(img_path)
             images.append(img)
             #img = cv2.resize(img, dsize = (291,218), interpolation = cv2.INTER_LINEAR)[76:142, 45:245,0:3].reshape(1,66,200,3)/255
-            img = img.reshape(1,66,200,3)/255
+            img = img[:,:,0:3].reshape(1,66,200,3)/255
             # predict Bzeta
             z_pred = self.z_model.predict(img)
             z_preds.append(z_pred)
@@ -236,65 +239,43 @@ class DensityPredictor:
         if method == 'dnn':
             beta = np.genfromtxt(str(self.extracted_coefficients_path_beta + 'beta.csv'), delimiter = ',')
         
-        elif (method == 'hmc_ridge') & (self.model == 'precise'):
-            self.hmc_ridge_dir = '../../../data/commaai/mcmc/filtered_gaussian_resampled/Ridge/'
-            self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas_new.npy')[500:,:]
+        elif method == 'hmc_ridge':
+            self.hmc_ridge_dir = '../../../../data/commaai/mcmc/filtered_gaussian_resampled/Ridge/'
+            self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas.npy')[500:,:]
             self.beta = np.mean(self.mu_t_hmc[:,0:10], axis = 0)
             self.tau_sq = np.exp(self.mu_t_hmc[:,10])
 
         elif (method == 'va_ridge') & (self.model == 'precise'):
-            self.va_ridge_dir = '../../../data/commaai/va/filtered_gaussian_resampled/Ridge/'
-            self.mu_t_va = np.load(self.va_ridge_dir + 'mu_ts_new.npy')
-            self.iter = self.mu_t_va.shape[0]
-            self.beta = np.mean(self.mu_t_va[int(0.95*self.iter):self.iter, 0:10], axis = 0)
-            self.tau_sq = np.exp(np.mean(self.mu_t_va[int(0.95*self.iter):self.iter, 10], axis = 0))
-            print('chose variational approximation with ridge prior as method')
-        
-        elif (method == 'va_ridge') & (self.model == 'imprecise'):
-            self.va_ridge_dir = '../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/'
-            self.mu_t_va = np.load(self.va_ridge_dir + 'mu_ts_new.npy')
+            self.va_ridge_dir = '../../../../data/commaai/va/filtered_gaussian_resampled/Ridge/'
+            self.mu_t_va = np.load(self.va_ridge_dir + 'mu_ts.npy')
             self.iter = self.mu_t_va.shape[0]
             self.beta = np.mean(self.mu_t_va[int(0.95*self.iter):self.iter, 0:10], axis = 0)
             self.tau_sq = np.exp(np.mean(self.mu_t_va[int(0.95*self.iter):self.iter, 10], axis = 0))
             print('chose variational approximation with ridge prior as method')
             
         elif (method == 'hmc_horseshoe') & (self.model == 'precise'):
-            self.hmc_horseshoe_dir = '../../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/'
-            self.mu_t_hmc = np.load(self.hmc_horseshoe_dir + 'all_thetas_new.npy').reshape(-1, 21)
-            self.beta = np.mean(self.mu_t_hmc[20000:,0:10], axis = 0)
-            self.Lambda = np.exp(0.5*self.mu_t_hmc[20000:,10:20])
-            self.tau_sq = np.exp(self.mu_t_hmc[20000:,20])
+            self.hmc_ridge_dir = '../../../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/'
+            self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas.npy').reshape(-1, 21)
+            self.beta = np.mean(self.mu_t_hmc[15000:,0:10], axis = 0)
+            self.Lambda = np.exp(0.5*self.mu_t_hmc[15000:,10:20])
+            self.tau_sq = np.exp(self.mu_t_hmc[15000:,20])
             print('chose hmc with horseshoe prior as method')
         
-        #elif (method == 'va_ridge') & (self.model == 'imprecise'):
-        #    va_ridge_dir = '../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/'
-        #    self.mu_t_va = np.load(va_ridge_dir + 'mu_ts_new.npy')
-        #    self.iter = self.mu_t_va.shape[0]
-        #    self.beta =  np.mean(self.mu_t_va[int(0.95*self.iter):self.iter,0:10], axis = 0)
-        #    self.tau_sq = np.exp(np.mean(self.mu_t_va[int(0.95*self.iter):self.iter,10], axis = 0))
-        #    print('chose variational approximation with ridge prior as method')
+        elif (method == 'va_ridge') & (self.model == 'imprecise'):
+            va_ridge_dir = '../../../../data/commaai/va/unfiltered_gaussian_resampled/Ridge/'
+            self.mu_t_va = np.load(va_ridge_dir + 'mu_ts.npy')
+            self.iter = self.mu_t_va.shape[0]
+            self.beta =  np.mean(self.mu_t_va[int(0.95*self.iter):self.iter,0:10], axis = 0)
+            self.tau_sq = np.exp(np.mean(self.mu_t_va[int(0.95*self.iter):self.iter,10], axis = 0))
+            print('chose variational approximation with ridge prior as method')
         
         elif (method == 'va_horseshoe') & (self.model == 'precise'):
             self.va_horseshoe_dir = '../../../data/commaai/va/filtered_gaussian_resampled/Horseshoe/'
-            self.mu_t_va = np.load(self.va_horseshoe_dir + 'mu_ts_new.npy')
+            self.mu_t_va = np.load(self.va_horseshoe_dir + 'mu_ts.npy')
             self.iteration = self.mu_t_va.shape[0]
             self.p = 10
-            self.B_ts = np.mean(np.load(self.va_horseshoe_dir + 'B_ts_new.npy')[int(0.95*self.iteration):,:,:], axis = 0)
-            self.d_ts = np.mean(np.load(self.va_horseshoe_dir + 'd_ts_new.npy')[int(0.95*self.iteration):,:,:], axis = 0)
-            self.var = np.sqrt(np.diag(self.B_ts.dot(self.B_ts.T) + self.d_ts**2))
-            self.beta = np.mean(self.mu_t_va[int(0.9*self.iteration):,0:10], axis = 0)
-            self.Lambdas_log = np.mean(self.mu_t_va[int(0.9*self.iteration):,10:20], axis = 0)
-            self.samples = np.exp(0.5*np.random.multivariate_normal(self.Lambdas_log.reshape(10,), np.diag(self.var[10:20]), 10000))
-            self.Lambda = np.mean(self.samples, axis = 0)
-            print('chose variational approximation with horseshoe prior as method')
-            
-        elif (method == 'va_horseshoe') & (self.model == 'imprecise'):
-            self.va_horseshoe_dir = '../../../data/commaai/va/unfiltered_gaussian_resampled/Horseshoe/'
-            self.mu_t_va = np.load(self.va_horseshoe_dir + 'mu_ts_new.npy')
-            self.iteration = self.mu_t_va.shape[0]
-            self.p = 10
-            self.B_ts = np.mean(np.load(self.va_horseshoe_dir + 'B_ts_new.npy')[int(0.95*self.iteration):,:,:], axis = 0)
-            self.d_ts = np.mean(np.load(self.va_horseshoe_dir + 'd_ts_new.npy')[int(0.95*self.iteration):,:,:], axis = 0)
+            self.B_ts = np.mean(np.load(self.va_horseshoe_dir + 'B_ts.npy')[int(0.95*self.iteration):,:,:], axis = 0)
+            self.d_ts = np.mean(np.load(self.va_horseshoe_dir + 'd_ts.npy')[int(0.95*self.iteration):,:,:], axis = 0)
             self.var = np.sqrt(np.diag(self.B_ts.dot(self.B_ts.T) + self.d_ts**2))
             self.beta = np.mean(self.mu_t_va[int(0.9*self.iteration):,0:10], axis = 0)
             self.Lambdas_log = np.mean(self.mu_t_va[int(0.9*self.iteration):,10:20], axis = 0)
@@ -363,7 +344,7 @@ class DensityPredictor:
             self.densities = [predict_single_density(self.B_zetas[i,:], self.grid, self.p_y_y0, self.part_1, self.phi_1_z, self.beta, self.tau_sq, self.Lambda, self.method) for i in range(0,self.B_zetas.shape[0])]
             
         if self.method == 'hmc_ridge':
-            #self.tau_sq = np.zeros(1)
+            self.tau_sq = np.zeros(1)
             self.Lambda = np.zeros(1)
             self.densities = [predict_single_density(self.B_zetas[i,:], self.grid, self.p_y_y0, self.part_1, self.phi_1_z, self.beta, self.tau_sq, self.Lambda, self.method) for i in range(0,self.B_zetas.shape[0])]
         return(self.densities)

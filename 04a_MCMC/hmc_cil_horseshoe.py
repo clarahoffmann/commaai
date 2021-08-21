@@ -46,10 +46,10 @@ BoB = B_zeta**2
 
 seed = 6835963
 # create lists to save results
-r0 = np.repeat(None, 30000)
-theta_tilde = np.repeat(None, 30000)
-r_tilde = np.repeat(None, 30000)
-log_dens = np.repeat(None, 30000)
+r0 = np.repeat(None, M)
+theta_tilde = np.repeat(None, M)
+r_tilde = np.repeat(None, M)
+log_dens = np.repeat(None, M)
 r_tilde = np.repeat(None, M)
 log_dens =  np.repeat(None, M)
 alpha = np.repeat(None, M)
@@ -126,7 +126,8 @@ for m in tqdm(range(1, M)):
         r_m[m + 1] = - r_tilde[m - 1]
         acc.append(0)
         all_thetas.append(np.array(theta_m_1[m + 1]))
-    if (m % 100 == 0) & (m > 1): 
+    if (m % 1000 == 0) & (m > 1): 
         print('current acceptance rate: ' + str(np.mean(acc[-100:])))
+        np.save('../../data/commaai/mcmc/unfiltered_gaussian_resampled/Horseshoe/all_thetas_new.npy', np.array(all_thetas))
 
 np.save('../../data/commaai/mcmc/unfiltered_gaussian_resampled/Horseshoe/all_thetas_new.npy', np.array(all_thetas))

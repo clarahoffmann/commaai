@@ -4,6 +4,7 @@ from tqdm import tqdm
 import ray
 import matplotlib.pyplot as plt
 from helpers_horseshoe import generate_S2_S, log_density, Leapfrog, Delta_theta
+import time
 ray.init()
 
 # import data from DNN training
@@ -55,6 +56,7 @@ theta_m_1 = np.repeat(None, M)
 r_m = np.repeat(None, M)
 theta_m_1[0] = np.append(np.zeros(p), np.append(np.repeat(0,p), 0))
 
+start = time.time()
 acc = []
 # loop over number of samples that we want to produce
 theta_tilde[0] = np.zeros(21)
@@ -124,4 +126,6 @@ for m in tqdm(range(1, M)):
         print('acceptance rate over last 1000 iterations: ' + str(np.mean(acc[-100:])))
         np.save('../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/all_thetas_try.npy', np.array(all_thetas))
 
-np.save('../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/all_thetas_try.npy', np.array(all_thetas))
+end = time.time()
+print(end - start)
+#np.save('../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/all_thetas_try.npy', np.array(all_thetas))

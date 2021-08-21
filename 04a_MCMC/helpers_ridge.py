@@ -1,4 +1,5 @@
 import numpy as np
+import ray
 
 def delta_beta(z, u, B, S, beta, tBB):
     '''

@@ -191,7 +191,7 @@ class density_predictor():
 
         if self.method == 'hmc_horseshoe':
             self.hmc_ridge_dir = '../../../../data/commaai/mcmc/unfiltered_gaussian_resampled/Horseshoe/'
-            self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas.npy').reshape(-1, 21)
+            self.mu_t_hmc = np.load(self.hmc_ridge_dir + 'all_thetas_new.npy').reshape(-1, 21)
             self.beta = np.mean(self.mu_t_hmc[15000:,0:10], axis = 0)
             self.Lambda = np.exp(0.5*self.mu_t_hmc[15000:,10:20])
             self.tau_sq = np.exp(self.mu_t_hmc[15000:,20])

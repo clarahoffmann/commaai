@@ -1,6 +1,7 @@
 import numpy as np
 import random as rand
 from tqdm import tqdm
+import time
 from helpers_ridge import generate_dS2_ddS2_S2_S, Leapfrog, log_density, Delta_theta
 
 # import data from DNN training
@@ -19,7 +20,7 @@ theta_prior = 2.5
 beta = np.repeat(0,10)
 # number of samples we want to produce
 M = 3000 + 1
-L = 250
+L = 300
 
 # number of parameters of theta
 q = B_zeta.shape[1] + 1
@@ -63,6 +64,7 @@ theta_m_1[0] = np.zeros(11)
 r_m[0] = np.random.multivariate_normal(np.zeros(q), np.identity(q), 1)
 r_m[1] = np.random.multivariate_normal(np.zeros(q), np.identity(q), 1)
 
+start = time.time()
 for m in tqdm(range(1, M - 1)):
     
     # Update S
@@ -103,5 +105,6 @@ for m in tqdm(range(1, M - 1)):
         all_thetas.append(np.array(theta_m_1[m + 1]))
     if ((m % 1000 == 0) & (m > 1)):
         print(np.mean(acc[(m - 500):]))
-
-np.save('../../data/commaai/mcmc/filtered_gaussian_resampled/Ridge/all_thetas_new.npy', all_thetas)
+end = time.time()
+print(end - start)
+#np.save('../../data/commaai/mcmc/filtered_gaussian_resampled/Ridge/all_thetas_new.npy', all_thetas)
