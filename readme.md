@@ -1,4 +1,4 @@
-Marginally calibrated posterior densities for end-to-end learning
+Supplementary Code for "Scalable calibrated posterior densities for end-to-end learning"
 
 This code provides the code to compute marginally calibrated predictive densities for end-to-end learners based on the implicit-copula neural linear model of Klein, Nott, Smith 2021, which we make scalable using Variational Inference.
 
@@ -8,10 +8,7 @@ The end result are calibrated predictive densities that can be evaluated in real
 ![](movie2.gif)
 
 
-Note that due 
-to storage limitations, the code starts after the comma.ai 2k19 video data
-has been transformed to a frame-by-frame-basis. If users want to replicate this rather trivial step
-they can download the entire comma.ai 2k19 data set from 
+To start, download the comma2k19 data via torrent from
 
 https://academictorrents.com/details/65a2fbc964078aff62076ff4e103f18b951c5ddb
 
