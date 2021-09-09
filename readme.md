@@ -3,8 +3,9 @@ Marginally calibrated posterior densities for end-to-end learning
 This code provides the code to compute marginally calibrated predictive densities for end-to-end learners based on the implicit-copula neural linear model of Klein, Nott, Smith 2021, which we make scalable using Variational Inference.
 The end result are calibrated predictive densities that can be evaluated in real-time during driving to quantify uncertainty and improve safety of end-to-end learners.
 
-
+<p align="center">
 ![](movie2.gif)
+</p>
 
 Note that due 
 to storage limitations, the code starts after the comma.ai 2k19 video data
