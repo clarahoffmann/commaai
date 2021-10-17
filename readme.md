@@ -1,4 +1,7 @@
-Supplementary Code for "Scalable calibrated posterior densities for end-to-end learning"
+Supplementary Code for `Marginally Calibrated Response Distributions for
+End-to-End Learning in Autonomous Driving' by Clara Hoffmann and Nadja Klein
+at Humboldt-Universit\"at zu Berlin, Emmy Noether Research Group in
+Statistics and Data Science, Unter den Linden 6, 10099 Berlin
 
 This code provides the code to compute marginally calibrated predictive densities for end-to-end learners based on the implicit-copula neural linear model of Klein, Nott, Smith 2021, which we make scalable using Variational Inference.
 
