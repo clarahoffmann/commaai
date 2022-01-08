@@ -1,13 +1,19 @@
-Marginally calibrated posterior densities for end-to-end learning
-- Code Overview
+## Supplementary Code for `Marginally Calibrated Response Distributions forEnd-to-End Learning in Autonomous Driving' 
+by Clara Hoffmann and Nadja Klein
+at Humboldt-Universität zu Berlin, Emmy Noether Research Group in
+Statistics and Data Science, Unter den Linden 6, 10099 Berlin
 
-Master thesis by Clara Hoffmann
-last changed: 15.01.2021
+preprint available at https://arxiv.org/abs/2110.01050
 
-The code serves to replicate the results in the thesis. Note that due 
-to storage limitations, the code starts after the comma.ai 2k19 video data
-has been transformed to a frame-by-frame-basis. If users want to replicate this rather trivial step
-they can download the entire comma.ai 2k19 data set from 
+This code provides the code to compute marginally calibrated predictive densities for end-to-end learners based on the implicit-copula neural linear model of Klein, Nott, Smith 2021, which we make scalable using Variational Inference.
+
+The end result are calibrated predictive densities that can be evaluated in real-time during driving to quantify uncertainty and improve safety of end-to-end learners:
+
+
+![](movie2.gif)
+
+
+To start, download the comma2k19 data via torrent from
 
 https://academictorrents.com/details/65a2fbc964078aff62076ff4e103f18b951c5ddb
 
