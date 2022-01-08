@@ -20,7 +20,7 @@ theta_prior = 2.5
 beta = np.repeat(0,10)
 # number of samples we want to produce
 M = 3000 + 1
-L = 300
+L = 150
 
 # number of parameters of theta
 q = B_zeta.shape[1] + 1

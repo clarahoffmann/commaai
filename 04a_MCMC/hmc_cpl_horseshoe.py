@@ -124,7 +124,7 @@ for m in tqdm(range(1, M)):
         all_thetas.append(np.array(theta_m_1[m + 1]))
     if (m % 1000 == 0) & (m > 1): 
         print('acceptance rate over last 1000 iterations: ' + str(np.mean(acc[-100:])))
-        np.save('../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/all_thetas_try.npy', np.array(all_thetas))
+        #np.save('../../data/commaai/mcmc/filtered_gaussian_resampled/Horseshoe/all_thetas_try.npy', np.array(all_thetas))
 
 end = time.time()
 print(end - start)

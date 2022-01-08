@@ -5,6 +5,7 @@ from tqdm import tqdm
 import ray
 import matplotlib.pyplot as plt
 from helpers_horseshoe import generate_S2_S, log_density, Leapfrog, Delta_theta
+import time
 ray.init()
 
 # import data from DNN training
@@ -130,4 +131,7 @@ for m in tqdm(range(1, M)):
         print('current acceptance rate: ' + str(np.mean(acc[-100:])))
         np.save('../../data/commaai/mcmc/unfiltered_gaussian_resampled/Horseshoe/all_thetas_new.npy', np.array(all_thetas))
 
+
+end = time.time()
+print(end - start)
 np.save('../../data/commaai/mcmc/unfiltered_gaussian_resampled/Horseshoe/all_thetas_new.npy', np.array(all_thetas))
